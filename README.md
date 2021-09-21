@@ -13,7 +13,9 @@ Click that, and select ssh, copy the link.
 Make a file on your computer you want the files stored in.
 Run in cmd:
 > git remote add origin **ssh**
+
 (ssh being the link from git)
+
 > git pull
 
 ### NodeJs and npm (This allows you to download packages)
