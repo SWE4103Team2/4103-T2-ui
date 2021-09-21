@@ -1,0 +1,17 @@
+* {
+  font-family: sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  border: 1px solid;
+  max-height: 75px;
+  font-size: 32px;
+};
+
+.header .title {
+  font-size: 32px;
+  float: left;
+}
