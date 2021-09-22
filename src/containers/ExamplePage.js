@@ -25,8 +25,8 @@ export const ExamplePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count2]);
 
-  const callAPI = async () => {
-    example().then(result =>{
+  const callAPI = async (bc, tc) => {
+    example(bc, tc).then(result =>{
       console.log(result)
     })
   };
@@ -67,7 +67,7 @@ export const ExamplePage = () => {
 
       <div style={{ height: '5rem' }} />
 
-      <button onClick={() => callAPI()}> Call API </button>
+      <button onClick={() => callAPI(count, count2)}> Call API </button>
     </div>
   );
 };
