@@ -7,7 +7,17 @@ I prefer VSCode, but it doesn't really matter what you use:
 https://code.visualstudio.com/
 
 ### Connect to git repo
-In the works
+On the Git REPO page
+https://github.com/SWE4103Team2/4103-T2-ui
+
+There should be a green button labelled "code"
+Click this and select HTTPS. Copy this link then Run:
+
+> git clone HTTPS_Link
+
+Then Run:
+
+> git push -u origin master
 
 ### NodeJs and npm (This allows you to download packages)
 Get npm installed:
