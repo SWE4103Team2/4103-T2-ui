@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import { Route } from './Route.js';
+import { ExamplePage } from '../../containers/ExamplePage.js'
 import {
   ROUTE_HOME,
-  ROUTE_PAGE, //For Example
+  ROUTE_EXAMPLE, //For Example
 } from '../../config/routes.js';
 
 const Router = () => {
@@ -13,8 +14,8 @@ const Router = () => {
         <Route exact path={ROUTE_HOME}>
           <p> Hello </p> {/* Here we would put containers */}
         </Route>
-        <Route exact path={ROUTE_PAGE}>
-          <p> Hi </p>
+        <Route exact path={ROUTE_EXAMPLE}>
+          <ExamplePage />
         </Route>
       </Switch>
     </BrowserRouter>
