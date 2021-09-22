@@ -7,16 +7,7 @@ I prefer VSCode, but it doesn't really matter what you use:
 https://code.visualstudio.com/
 
 ### Connect to git repo
-In the git repo, above the README, there should be a green button "code"
-Click that, and select https, copy the link.
-
-Make a file on your computer you want the files stored in.
-Run in cmd:
-> git clone **https**
-
-(https being the link from git)
-
-> git pull
+In the works
 
 ### NodeJs and npm (This allows you to download packages)
 Get npm installed:
