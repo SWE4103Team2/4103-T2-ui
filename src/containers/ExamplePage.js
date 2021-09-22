@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { example } from '../api/example.js';
 
 export const ExamplePage = () => {
   const [count, setCount] = useState(0);
@@ -24,6 +25,11 @@ export const ExamplePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count2]);
 
+  const callAPI = async () => {
+    example().then(result =>{
+      console.log(result)
+    })
+  };
 
   // Usually do not put spaces between the JSX
   // Spaced it so you guys can read it easier -- hopefully.
@@ -58,6 +64,10 @@ export const ExamplePage = () => {
         <p> Fragment </p>
         <p> Fragment </p>
       </>
+
+      <div style={{ height: '5rem' }} />
+
+      <button onClick={() => callAPI()}> Call API </button>
     </div>
   );
 };
