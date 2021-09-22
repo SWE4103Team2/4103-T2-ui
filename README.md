@@ -12,7 +12,7 @@ Click that, and select https, copy the link.
 
 Make a file on your computer you want the files stored in.
 Run in cmd:
-> git remote add origin **https**
+> git clone **https**
 
 (https being the link from git)
 
