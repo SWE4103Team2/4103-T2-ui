@@ -8,13 +8,13 @@ https://code.visualstudio.com/
 
 ### Connect to git repo
 In the git repo, above the README, there should be a green button "code"
-Click that, and select ssh, copy the link.
+Click that, and select https, copy the link.
 
 Make a file on your computer you want the files stored in.
 Run in cmd:
-> git remote add origin **ssh**
+> git remote add origin **https**
 
-(ssh being the link from git)
+(https being the link from git)
 
 > git pull
 
