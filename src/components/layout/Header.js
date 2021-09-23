@@ -2,15 +2,14 @@ import React from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
-import logo from '../../assets/unb.jpg'
+import logo from '../../assets/unb.png'
 
 const Header = () => {
   return (
-    <Grid container borderBottom={2.5} maxHeight='5rem'>
+    <Grid container borderBottom={2.5} bgcolor='#ffffff70' height='3rem'>
       <Stack alignItems='center' direction='row'> 
-        <img src={logo} alt="" height='75px' className='logo' />
-        <Divider orientation='vertical' sx={{ mr: '2rem' }} />
-        <h1> SWE4103 Team2 </h1>
+        <img src={logo} alt='' style={{ marginLeft: '0.5rem', maxHeight: '2.75rem' }} />
+        <h2 style={{ marginLeft: '2rem' }}> SWE4103 Team2 </h2>
       </Stack>
     </Grid>
   );
