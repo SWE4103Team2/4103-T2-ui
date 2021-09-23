@@ -4,9 +4,9 @@ import React from 'react';
 // Then format this one with css so it doesn't overlap.
 const Content = ({ children }) => {
   return (
-    <div>
+    <>
       {children}
-    </div>
+    </>
   );
 };
 

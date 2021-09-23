@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import { Route } from './Route.js';
+import { Home } from '../../containers/Home.js';
 import { ExamplePage } from '../../containers/ExamplePage.js'
 import {
   ROUTE_HOME,
@@ -12,7 +13,7 @@ const Router = () => {
     <BrowserRouter>
       <Switch>
         <Route exact path={ROUTE_HOME}>
-          <p> Hello </p> {/* Here we would put containers */}
+          <Home />
         </Route>
         <Route exact path={ROUTE_EXAMPLE}>
           <ExamplePage />

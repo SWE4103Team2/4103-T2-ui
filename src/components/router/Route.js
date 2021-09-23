@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route as ReactRoute } from 'react-router-dom';
-import { Content, Header, Sidebar } from '../layout/index.js';
+import { Content, Header, Sidebar, Footer } from '../layout/index.js';
 
 const Route = ({ children, ...rest }) => {
   return (
@@ -10,6 +10,7 @@ const Route = ({ children, ...rest }) => {
       <Content>
         {children}
       </Content>
+      <Footer />
     </ReactRoute>
   );
 };
