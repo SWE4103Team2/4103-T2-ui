@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
 import logo from '../../assets/unb.png'
 
 const Header = () => {
