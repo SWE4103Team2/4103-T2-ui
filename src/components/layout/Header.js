@@ -1,12 +1,18 @@
 import React from 'react';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
 import logo from '../../assets/unb.jpg'
 
 const Header = () => {
   return (
-    <div className="header">
-      <img src={logo} alt="" height="75px" className="logo" />
-      <p className="title"> SWE4103 Team 2 </p>
-    </div>
+    <Grid container borderBottom={2.5} maxHeight='5rem'>
+      <Stack alignItems='center' direction='row'> 
+        <img src={logo} alt="" height='75px' className='logo' />
+        <Divider orientation='vertical' sx={{ mr: '2rem' }} />
+        <h1> SWE4103 Team2 </h1>
+      </Stack>
+    </Grid>
   );
 }
 
