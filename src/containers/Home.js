@@ -7,15 +7,9 @@ import Container from '@mui/material/Container';
 
 export const Home = () => {
   const [file, setFile] = useState(null);
-  // const reader = new FileReader(); Reads the content from files -- will move to API later.
-
-  /* reader.onload = e => {
-    const array = e.target.result;
-  } */
 
   useEffect(() => {
     if (file) {
-      // reader.readAsText(file);
       console.log(file); // Here we can call an function which sends the file to the API.
     }
   }, [file]);
