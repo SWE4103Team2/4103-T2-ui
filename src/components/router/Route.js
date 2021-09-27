@@ -1,15 +1,19 @@
 import React from 'react';
 import { Route as ReactRoute } from 'react-router-dom';
-import { Content, Header, Sidebar } from '../layout/index.js';
+import Grid from '@mui/material/Grid';
+import { Content, Header, Sidebar, Footer } from '../layout/index.js';
 
 const Route = ({ children, ...rest }) => {
   return (
     <ReactRoute {...rest}>
-      <Header />
-      <Sidebar />
-      <Content>
-        {children}
-      </Content>
+      <Grid>
+        <Header />
+        <Sidebar />
+        <Content>
+          {children}
+        </Content>
+        <Footer />
+      </Grid>
     </ReactRoute>
   );
 };
