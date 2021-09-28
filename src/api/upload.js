@@ -1,8 +1,9 @@
 import api from './api';
 
 export const uploadFile = async (file) => {
-  const data = await file.text();
-  const result = await api.put('/upload/', { data });
+  const form = new FormData();
+  form.append('file', file);
+  const result = await api.post('/upload/', form);
 
   return result.data;
 };
