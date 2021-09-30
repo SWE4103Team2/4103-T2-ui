@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import MTable from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Input from '@mui/material/Input';
-import Button from '@mui/material/Button';
+import {
+  Table as MTable,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Input,
+  Button
+} from '@mui/material';
 
 import { uploadFile } from '../api/upload';
 
+// We can adjust this to take in props
+// Such as the api call we want to make
+// Therefore making it reusable on all pages.
+// If someone gets here before I can adjust this,
+// Just send me a msg - Robert
 const Table = () => {
   const [file, setFile] = useState(null);
   const [rows, setRows] = useState(null);

@@ -1,8 +1,6 @@
-import React from 'react';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import React from 'react'
 import Table from '../components/Table.js';
-import Container from '@mui/material/Container';
+import { Container, Grid, Paper } from '@mui/material';
 
 export const Students = () => {
   return (
