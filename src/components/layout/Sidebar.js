@@ -5,11 +5,13 @@ import { Box, Button, Divider, List, ListItem, ListItemIcon, ListItemText, Toolt
 import MenuIcon from '@mui/icons-material/Menu';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import StudentIcon from '@mui/icons-material/PersonSearch';
+import TempIcon from '@mui/icons-material/HighlightOff';
+import { ROUTE_STUDENTS } from '../../config/routes.js';
 
-const Item = ({ open, title, icon }) => {
+const Item = ({ open, title, icon, route }) => {
   return (
     <>
-      <ListItem button component={Link} to='/' sx={{ pl: "25px" }}>
+      <ListItem button component={Link} to={route} sx={{ pl: "25px" }}>
         {open ? (
           <ListItemIcon>
             {icon}
@@ -46,10 +48,10 @@ const Sidebar = () => {
         </Button>
         <Divider />
         <List>
-          <Item open={open} title="Students" icon={<StudentIcon color="secondary" />} />
-          <Item open={open} title="Page 2" icon={<StudentIcon color="secondary" />} />
-          <Item open={open} title="Page 3" icon={<StudentIcon color="secondary" />} />
-          <Item open={open} title="Page 4" icon={<StudentIcon color="secondary" />} />
+          <Item open={open} title="Students" icon={<StudentIcon color="secondary" />} route={ROUTE_STUDENTS} />
+          <Item open={open} title="Page 2" icon={<TempIcon color="secondary" />} route={"/"} />
+          <Item open={open} title="Page 3" icon={<TempIcon color="secondary" />} route={"/"} />
+          <Item open={open} title="Page 4" icon={<TempIcon color="secondary" />} route={"/"} />
         </List>
       </Drawer>
     </Box>  
