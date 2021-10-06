@@ -6,7 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import StudentIcon from '@mui/icons-material/PersonSearch';
 
-const Item = ({ open, title, icon }) => {
+const Item = ({ open, title, icon, link }) => {
   return (
     <>
       <ListItem button component={Link} to='/' sx={{ pl: "25px" }}>
