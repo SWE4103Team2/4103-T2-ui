@@ -8,7 +8,11 @@ import StudentIcon from '@mui/icons-material/PersonSearch';
 import TempIcon from '@mui/icons-material/HighlightOff';
 import { ROUTE_STUDENTS } from '../../config/routes.js';
 
+<<<<<<< HEAD
 const Item = ({ open, title, icon, route }) => {
+=======
+const Item = ({ open, title, icon, link }) => {
+>>>>>>> d534199 (Moved repeated code to content component)
   return (
     <>
       <ListItem button component={Link} to={route} sx={{ pl: "25px" }}>
