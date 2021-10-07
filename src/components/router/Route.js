@@ -6,17 +6,17 @@ import { ROUTE_LOGIN } from '../../config/routes.js';
 
 const Route = ({ children, ...rest }) => {
   const location = useLocation();
-  const [check, setCheck] = useState(false);
+  const [login, setLogin] = useState(false);
   
   useEffect(() => {
-    setCheck(location.pathname !== ROUTE_LOGIN);
+    setLogin(location.pathname === ROUTE_LOGIN);
   }, [location.pathname]);
 
   return (
     <ReactRoute {...rest}>
       <Grid>
-        {check && <Sidebar />}
-        <Box sx={check && { ml: '75px' }}>
+        {!login && <Sidebar />}
+        <Box sx={!login && { ml: '75px' }}>
           <Header />
           <Content>
             {children}
