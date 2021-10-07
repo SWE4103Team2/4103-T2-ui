@@ -1,12 +1,15 @@
 import React from 'react';
-import { Stack, Button } from '@mui/material'
+import { Typography } from '@mui/material'
+import { PC, AC, PA } from '../config/userType.js'
 
-export const Home = () => {
+// This is temporary.
+export const Home = ({ user }) => {
   return (
-    <Stack spacing={2} sx={{ marginTop: '7.5rem', width: '10rem' }}>
-      <Button variant="contained"> Program Coordinator </Button>
-      <Button variant="contained"> Accreditation Coordinators </Button>
-      <Button variant="contained"> Program Advisors </Button>
-    </Stack>
+    <>
+      <Typography sx={{ mr: '0.5rem' }}> Hello </Typography>
+      {user === PC && <Typography> Program Coordinator </Typography>}
+      {user === AC && <Typography> Accreditation Coordinators </Typography>}
+      {user === PA && <Typography> Program Advisors </Typography>}
+    </>
   );
 };

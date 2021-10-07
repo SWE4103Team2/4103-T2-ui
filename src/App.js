@@ -1,5 +1,7 @@
 import React from 'react';
 import Router from './components/router/Router.js';
+import { BrowserRouter } from 'react-router-dom';
+import { BrowserHistory } from 'react-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 const theme = createTheme({
@@ -30,7 +32,9 @@ const theme = createTheme({
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Router />
+      <BrowserRouter history={BrowserHistory}>
+        <Router />
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
