@@ -17,7 +17,7 @@ const Route = ({ children, ...rest }) => {
       <Grid>
         {!login && <Sidebar />}
         <Box sx={!login && { ml: '75px' }}>
-          <Header />
+          <Header login={login} />
           <Content>
             {children}
           </Content>
