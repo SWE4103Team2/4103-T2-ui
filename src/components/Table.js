@@ -7,7 +7,8 @@ import {
   TableHead,
   TableRow,
   Input,
-  Button
+  Button,
+  Box
 } from '@mui/material';
 
 import { uploadFile } from '../api/upload';
@@ -17,11 +18,22 @@ import { uploadFile } from '../api/upload';
 // Therefore making it reusable on all pages.
 // If someone gets here before I can adjust this,
 // Just send me a msg - Robert
-const Table = () => {
+const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
   const [rows, setRows] = useState(null);
   const [header, setHeader] = useState([]);
   const [body, setBody] = useState([]);
+
+  console.log(studentRows);
+
+  const getPropertiesOfRow = (row) => {
+    const prop = [];
+    for(let cell in row) {
+        console.log(row[cell]);
+        prop.push(row[cell]);
+    }     
+    return prop;
+}
 
   useEffect(() => {
     if (file) {
@@ -37,32 +49,40 @@ const Table = () => {
   useEffect(() => {
     console.log(rows);
 
-    if (rows) {
       const h = (
         <TableRow>
-          {rows[0].map(item => {
+          {names.map(item => {
             return <TableCell> {item} </TableCell>;
           })}
         </TableRow>
       );
-      const b = rows.slice(1).map(items => {
-        return (
-          <TableRow>
-            {items.map(item => {
-              return <TableCell> {item} </TableCell>
-            })}
-          </TableRow>
-        );
-      });
+      const b = studentRows.map(row => {
+                let rowProperties = getPropertiesOfRow(row);
+                return <TableRow>
+                  {rowProperties.map(cell => {
+                    return <TableCell>{cell}</TableCell>})}
+                </TableRow>
+            });
+
+// file ? rows.slice(1).map(items => {
+//   <TableRow>
+//     {items.map(item => {
+//       return <TableCell> {item} </TableCell>
+//     })}
+//   </TableRow>
+// }) : 
 
       setHeader(h);
       setBody(b);
     }
-  }, [rows]);
+  , [studentRows]);
 
 
   return (
     <>
+    <Box maxWidth="1600px" minWidth="1400px" height='400pc' sx={{
+      backgroundColor: 'white'
+    }}>
       <label>
         <Input
           sx={{ display: 'none' }}
@@ -70,7 +90,7 @@ const Table = () => {
           accept="text/plain"
           type="file"
         />
-        <Button variant="contained" component="span"> 
+        <Button variant="contained" component="span" disabled='true' > 
           Upload File
         </Button>
       </label>
@@ -84,6 +104,7 @@ const Table = () => {
           </TableBody>
         </MTable>
       </TableContainer>
+      </Box>
     </>
   );
 }
