@@ -1,30 +1,39 @@
-import React from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Switch, useHistory, useLocation } from 'react-router-dom';
 import { Route } from './Route.js';
 import { Home } from '../../containers/Home.js';
-import { ExamplePage } from '../../containers/ExamplePage.js';
+import { Login } from '../../containers/Login.js';
 import { Students } from '../../containers/Students.js';
 import {
   ROUTE_HOME,
-  ROUTE_STUDENTS,
-  ROUTE_EXAMPLE, //For Example
+  ROUTE_LOGIN,
+  ROUTE_STUDENTS
 } from '../../config/routes.js';
 
 const Router = () => {
+  const history = useHistory();
+  const location = useLocation();
+  const [user, setUser] = useState(0); // We can pass this to route -> sidebar to alter what users see.
+
+  useEffect(() => {
+    if (user === 0 && location.pathname !== ROUTE_LOGIN) {
+      history.push(ROUTE_LOGIN);
+    }
+    // eslint-disable-next-line
+  }, [user, location]);
+
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path={ROUTE_HOME}>
-          <Home />
-        </Route>
-        <Route exact path={ROUTE_EXAMPLE}>
-          <ExamplePage />
-        </Route>
-        <Route exact path={ROUTE_STUDENTS}>
-          <Students />
-        </Route>
-      </Switch>
-    </BrowserRouter>
+    <Switch>
+      <Route exact path={ROUTE_HOME} user={user}>
+        <Home user={user} />
+      </Route>
+      <Route exact path={ROUTE_LOGIN}>
+        <Login setUser={setUser} />
+      </Route>
+      <Route exact path={ROUTE_STUDENTS} user={user}>
+        <Students />
+      </Route>
+    </Switch>
   );
 }
 
