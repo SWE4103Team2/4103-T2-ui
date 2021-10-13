@@ -27,7 +27,7 @@ const Table = () => {
     if (file) {
       const upload = async () => {
         const data = await uploadFile(file)
-        setRows(data);
+        console.log(data);
       };
 
       upload();

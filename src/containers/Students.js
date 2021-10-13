@@ -1,11 +1,12 @@
 import React from 'react'
-import Table from '../components/Table.js';
 import { Paper } from '@mui/material';
+import { FileUpload } from '../components/FileUpload';
+import { uploadStudents } from '../api/upload';
 
 export const Students = () => {
   return (
     <Paper sx={{ m: '1rem' }}>
-      <Table />
+      <FileUpload apiFunction={uploadStudents} />
     </Paper>
   );
 };
