@@ -13,7 +13,7 @@ export const getStudent = async (id, file) => {
 };
 
 export const getFileNames = async () => {
-  const result = await api.get('/students/getFiles', {params: {}});
+  const result = await api.get('/students/getFiles');
 
   return result.data;
 };

@@ -7,12 +7,6 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton } from '@mui/x-data-grid';
 
-
-// We can adjust this to take in props
-// Such as the api call we want to make
-// Therefore making it reusable on all pages.
-// If someone gets here before I can adjust this,
-// Just send me a msg - Robert
 const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
   const [rows, setRows] = useState([]);
