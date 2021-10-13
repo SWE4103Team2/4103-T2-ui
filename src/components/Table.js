@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Table as MTable,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Input,
   Button,
-  Box
 } from '@mui/material';
 
-import { uploadFile } from '../api/upload';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { DataGrid, GridToolbarContainer, GridToolbarFilterButton } from '@mui/x-data-grid';
+
 
 // We can adjust this to take in props
 // Such as the api call we want to make
@@ -20,69 +15,29 @@ import { uploadFile } from '../api/upload';
 // Just send me a msg - Robert
 const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
-  const [rows, setRows] = useState(null);
-  const [header, setHeader] = useState([]);
-  const [body, setBody] = useState([]);
+  const [rows, setRows] = useState([]);
 
   console.log(studentRows);
+  console.log(names);
 
-  const getPropertiesOfRow = (row) => {
-    const prop = [];
-    for(let cell in row) {
-        console.log(row[cell]);
-        prop.push(row[cell]);
-    }     
-    return prop;
-}
-
-  useEffect(() => {
-    if (file) {
-      const upload = async () => {
-        const data = await uploadFile(file)
-        setRows(data);
-      };
-
-      upload();
-    };
-  }, [file])
+  /*
+    A custom toolbar for the datagrid table. 
+  */
+  const customToolbar = () => {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarFilterButton />
+      </GridToolbarContainer>
+    );
+  }
 
   useEffect(() => {
-    console.log(rows);
-
-      const h = (
-        <TableRow>
-          {names.map(item => {
-            return <TableCell> {item} </TableCell>;
-          })}
-        </TableRow>
-      );
-      const b = studentRows.map(row => {
-                let rowProperties = getPropertiesOfRow(row);
-                return <TableRow>
-                  {rowProperties.map(cell => {
-                    return <TableCell>{cell}</TableCell>})}
-                </TableRow>
-            });
-
-// file ? rows.slice(1).map(items => {
-//   <TableRow>
-//     {items.map(item => {
-//       return <TableCell> {item} </TableCell>
-//     })}
-//   </TableRow>
-// }) : 
-
-      setHeader(h);
-      setBody(b);
-    }
-  , [studentRows]);
+    setRows(studentRows);
+  }, [studentRows]);
 
 
   return (
-    <>
-    <Box maxWidth="1600px" minWidth="1400px" height='400pc' sx={{
-      backgroundColor: 'white'
-    }}>
+    <div style={{height:'43.6pc'}}>
       <label>
         <Input
           sx={{ display: 'none' }}
@@ -90,22 +45,23 @@ const Table = ({studentRows, names}) => {
           accept="text/plain"
           type="file"
         />
-        <Button variant="contained" component="span" disabled='true' > 
+        <Button variant="contained" component="span" disabled='true' startIcon={<UploadFileIcon />} sx={{
+          marginBottom:'10px',
+          marginLeft: '18px'
+        }} > 
           Upload File
         </Button>
       </label>
-      <TableContainer>
-        <MTable>
-          <TableHead>
-            {header}
-          </TableHead>
-          <TableBody>
-            {body}
-          </TableBody>
-        </MTable>
-      </TableContainer>
-      </Box>
-    </>
+      <DataGrid
+         rows={rows}
+         columns={names}
+         disableColumnMenu={true}
+         hideFooter={true}
+        //  components={{ // Uncomment this to add a filter button at the top of the table
+        //    Toolbar: customToolbar
+        //  }}
+      />
+    </div>
   );
 }
 
