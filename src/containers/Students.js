@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import { getStudents, getStudent, getFileNames } from '../api/students';
-import { Paper, TextField, Button, Select, MenuItem } from '@mui/material'; 
+import { Paper, Grid, TextField, Button, Select, MenuItem } from '@mui/material'; 
 
 export const Students = () => {
 
@@ -50,40 +50,31 @@ export const Students = () => {
 
 
   return (
-    <Paper sx={{
-      minHeight:'52pc',
-      minWidth:1400,
-      backgroundColor: 'white',
-      m: '1rem' 
-    }}>
-        <Select
-          label="Current File"
-          value={file}
-          autoWidth
-          placeholder="Choose File"
-          onChange={(e) => setFile(e.target.value)}   
-          sx={{
-            minWidth:150,
-            minHeight:50,
-            margin:2,
-          }}
-        >
-          {menuItems}
-        </Select> 
-        <TextField 
-          id='outlined-basic'
-          label="Search" 
-          variant='outlined'
-          onChange={(e) => setSearchValue(e.target.value)}
-          sx={{
-            left:'58%',
-            margin:2
-          }} />
-        <Button variant="contained" wrap component="span" onClick={() => callGetStudents()} sx={{
-          left:"58%"
-        }}> 
-          List Students
-        </Button>
+    <Paper sx={{minWidth:1400 }}>
+      <Grid container sx={{ p: '1rem' }}>
+        <Grid xs="5">
+          <Select
+            variant="outlined"
+            size="small"
+            value={file}
+            onChange={(e) => setFile(e.target.value)}   
+            sx={{ width: '15rem' }}
+          >
+            {menuItems}
+          </Select> 
+        </Grid>
+        <Grid xs="5"> {/* Make this align right */}
+          <TextField 
+            label="Search" 
+            variant='outlined'
+            size="small"
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+          <Button variant="contained" wrap component="span" onClick={() => callGetStudents()}> 
+            List Students
+          </Button>
+        </Grid>
+      </Grid>
       <Table names={columns} studentRows={students} />
     </Paper>
   );
