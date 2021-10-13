@@ -27,7 +27,7 @@ const Table = ({studentRows, names}) => {
       </GridToolbarContainer>
     );
   }
-
+  // Sets the rows variable with the "studentRows" parameter
   useEffect(() => {
     setRows(studentRows);
   }, [studentRows]);
@@ -42,6 +42,7 @@ const Table = ({studentRows, names}) => {
           accept="text/plain"
           type="file"
         />
+        {/* Commenting out the button for now until we figure out where we want the upload process to occur.*/}
         {/* <Button variant="contained" component="span" disabled='true' startIcon={<UploadFileIcon />} sx={{
           marginBottom:'10px',
           marginLeft: '18px'

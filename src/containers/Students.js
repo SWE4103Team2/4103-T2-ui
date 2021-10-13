@@ -19,7 +19,9 @@ export const Students = () => {
   ]
 
   /*
-    A call to the API to grab the list of students 
+    A call to the API to grab the list of students.
+    Either grab all students in the specific file or
+    grab a student using their student_ID from the search bar.
   */
   const callGetStudents = async () => {
     if(searchValue === "") {
@@ -29,10 +31,11 @@ export const Students = () => {
     } else {
       getStudent(searchValue, file).then(result => {
         setStudents(result);
-      })
+      });
     }
   };
 
+  // Grabbing the file names from the database
   useEffect(() => {
     getFileNames().then(result => {
       const options = result.map(item => {
@@ -42,11 +45,12 @@ export const Students = () => {
     });
   }, []);
 
+  // Adding a id property to each student in order to add them to the datagrid table.
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
       students[i].id = i+1;
     }
-  }, [students])
+  }, [students]);
 
 
   return (
@@ -63,14 +67,14 @@ export const Students = () => {
             {menuItems}
           </Select> 
         </Grid>
-        <Grid xs="5"> {/* Make this align right */}
+        <Grid container xs="5" md="7" direction='row' justifyContent="flex-end" alignItems="center" >
           <TextField 
             label="Search" 
             variant='outlined'
             size="small"
             onChange={(e) => setSearchValue(e.target.value)}
           />
-          <Button variant="contained" wrap component="span" onClick={() => callGetStudents()}> 
+          <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={() => callGetStudents()}> 
             List Students
           </Button>
         </Grid>
