@@ -6,14 +6,14 @@ import { Paper, TextField, Button, Select, MenuItem } from '@mui/material';
 export const Students = () => {
 
   const [students, setStudents] = useState([]);
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [menuItems, setMenuItems] = useState([]);
 
   // Column names for the  list students table
   const columns = [
         {field: 'student_ID', headerName: 'ID', width:'200', flex: 0.5, align: "center", headerAlign: "center"},
-        {field: 'Fname-Lname', headerName: 'Name', width:'200', flex: 1, align: "center", headerAlign: "center"},
+        {field: 'Name', headerName: 'Name', width:'200', flex: 1, align: "center", headerAlign: "center"},
         {field: 'Start_Date', headerName: 'Start Date', width:'200', flex: 1, align: "center", headerAlign: "center"},
         {field: 'Program', headerName: 'Program', width:'200', flex: 1, align: "center", headerAlign: "center"},
   ]
@@ -23,14 +23,12 @@ export const Students = () => {
   */
   const callGetStudents = async () => {
     if(searchValue === "") {
-      getStudents().then(result => {
+      getStudents(file).then(result => {
         setStudents(result);
       })
     } else {
-      getStudent(searchValue).then(result => {
+      getStudent(searchValue, file).then(result => {
         setStudents(result);
-        console.log(result);
-
       })
     }
   };
@@ -70,7 +68,7 @@ export const Students = () => {
             margin:2,
           }}
         >
-          {menuItems};
+          {menuItems}
         </Select> 
         <TextField 
           id='outlined-basic'

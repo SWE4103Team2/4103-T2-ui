@@ -17,9 +17,6 @@ const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
   const [rows, setRows] = useState([]);
 
-  console.log(studentRows);
-  console.log(names);
-
   /*
     A custom toolbar for the datagrid table. 
   */
@@ -37,7 +34,7 @@ const Table = ({studentRows, names}) => {
 
 
   return (
-    <div style={{height:'43.6pc'}}>
+    <div style={{height:'47pc'}}>
       <label>
         <Input
           sx={{ display: 'none' }}
@@ -45,18 +42,20 @@ const Table = ({studentRows, names}) => {
           accept="text/plain"
           type="file"
         />
-        <Button variant="contained" component="span" disabled='true' startIcon={<UploadFileIcon />} sx={{
+        {/* <Button variant="contained" component="span" disabled='true' startIcon={<UploadFileIcon />} sx={{
           marginBottom:'10px',
           marginLeft: '18px'
         }} > 
           Upload File
-        </Button>
+        </Button> */}
       </label>
       <DataGrid
          rows={rows}
          columns={names}
          disableColumnMenu={true}
-         hideFooter={true}
+         hideFooter={false}
+         pageSize={12}
+         onRowDoubleClick
         //  components={{ // Uncomment this to add a filter button at the top of the table
         //    Toolbar: customToolbar
         //  }}
