@@ -10,8 +10,6 @@ import {
   Button
 } from '@mui/material';
 
-import { uploadFile } from '../api/upload';
-
 // We can adjust this to take in props
 // Such as the api call we want to make
 // Therefore making it reusable on all pages.
@@ -25,10 +23,7 @@ const Table = () => {
 
   useEffect(() => {
     if (file) {
-      const upload = async () => {
-        const data = await uploadFile(file)
-        console.log(data);
-      };
+      const upload = async () => {};
 
       upload();
     };
