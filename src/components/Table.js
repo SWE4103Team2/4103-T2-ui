@@ -3,7 +3,6 @@ import {
   Input,
   Button,
 } from '@mui/material';
-
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton } from '@mui/x-data-grid';
 
@@ -11,9 +10,6 @@ const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
   const [rows, setRows] = useState([]);
 
-  /*
-    A custom toolbar for the datagrid table. 
-  */
   const customToolbar = () => {
     return (
       <GridToolbarContainer>
@@ -21,6 +17,7 @@ const Table = ({studentRows, names}) => {
       </GridToolbarContainer>
     );
   }
+  
   // Sets the rows variable with the "studentRows" parameter
   useEffect(() => {
     setRows(studentRows);

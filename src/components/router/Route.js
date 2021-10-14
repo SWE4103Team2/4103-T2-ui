@@ -16,7 +16,7 @@ const Route = ({ children, ...rest }) => {
     <ReactRoute {...rest}>
       <Grid>
         {!login && <Sidebar />}
-        <Box sx={!login && { ml: '75px' }}>
+        <Box sx={!login ? { ml: '75px' } : null}>
           <Header login={login} />
           <Content>
             {children}
