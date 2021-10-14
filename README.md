@@ -52,3 +52,6 @@ Then run:
 >yarn start
 
 'yarn start' will start the web application.
+
+### .env
+REACT_APP_API=http://localhost:3001/

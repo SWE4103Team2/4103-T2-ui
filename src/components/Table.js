@@ -25,7 +25,7 @@ const Table = ({studentRows, names}) => {
 
 
   return (
-    <div style={{height:'47pc'}}>
+    <div style={{height:'40pc'}}>
       <label>
         <Input
           sx={{ display: 'none' }}
@@ -46,7 +46,7 @@ const Table = ({studentRows, names}) => {
          columns={names}
          disableColumnMenu={true}
          hideFooter={false}
-         pageSize={12}
+         pageSize={10}
          onRowDoubleClick
         //  components={{ // Uncomment this to add a filter button at the top of the table
         //    Toolbar: customToolbar
