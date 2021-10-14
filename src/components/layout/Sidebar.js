@@ -17,7 +17,7 @@ const Item = ({ open, title, icon, route }) => {
             {icon}
           </ListItemIcon>
         ) : (
-          <Tooltip title="Students" placement="right" arrow>
+          <Tooltip title={title} placement="right" arrow>
             <ListItemIcon>
               {icon}
             </ListItemIcon>
