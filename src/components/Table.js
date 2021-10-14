@@ -1,63 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Table as MTable,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Input,
-  Button
+  Button,
 } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { DataGrid, GridToolbarContainer, GridToolbarFilterButton } from '@mui/x-data-grid';
 
-// We can adjust this to take in props
-// Such as the api call we want to make
-// Therefore making it reusable on all pages.
-// If someone gets here before I can adjust this,
-// Just send me a msg - Robert
-const Table = () => {
+const Table = ({studentRows, names}) => {
   const [file, setFile] = useState(null);
-  const [rows, setRows] = useState(null);
-  const [header, setHeader] = useState([]);
-  const [body, setBody] = useState([]);
+  const [rows, setRows] = useState([]);
 
+  const customToolbar = () => {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarFilterButton />
+      </GridToolbarContainer>
+    );
+  }
+  
+  // Sets the rows variable with the "studentRows" parameter
   useEffect(() => {
-    if (file) {
-      const upload = async () => {};
-
-      upload();
-    };
-  }, [file])
-
-  useEffect(() => {
-    console.log(rows);
-
-    if (rows) {
-      const h = (
-        <TableRow>
-          {rows[0].map(item => {
-            return <TableCell> {item} </TableCell>;
-          })}
-        </TableRow>
-      );
-      const b = rows.slice(1).map(items => {
-        return (
-          <TableRow>
-            {items.map(item => {
-              return <TableCell> {item} </TableCell>
-            })}
-          </TableRow>
-        );
-      });
-
-      setHeader(h);
-      setBody(b);
-    }
-  }, [rows]);
+    setRows(studentRows);
+  }, [studentRows]);
 
 
   return (
-    <>
+    <div style={{height:'47pc'}}>
       <label>
         <Input
           sx={{ display: 'none' }}
@@ -65,21 +33,26 @@ const Table = () => {
           accept="text/plain"
           type="file"
         />
-        <Button variant="contained" component="span"> 
+        {/* Commenting out the button for now until we figure out where we want the upload process to occur.*/}
+        {/* <Button variant="contained" component="span" disabled='true' startIcon={<UploadFileIcon />} sx={{
+          marginBottom:'10px',
+          marginLeft: '18px'
+        }} > 
           Upload File
-        </Button>
+        </Button> */}
       </label>
-      <TableContainer>
-        <MTable>
-          <TableHead>
-            {header}
-          </TableHead>
-          <TableBody>
-            {body}
-          </TableBody>
-        </MTable>
-      </TableContainer>
-    </>
+      <DataGrid
+         rows={rows}
+         columns={names}
+         disableColumnMenu={true}
+         hideFooter={false}
+         pageSize={12}
+         onRowDoubleClick
+        //  components={{ // Uncomment this to add a filter button at the top of the table
+        //    Toolbar: customToolbar
+        //  }}
+      />
+    </div>
   );
 }
 
