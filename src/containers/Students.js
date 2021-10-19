@@ -11,7 +11,7 @@ export const Students = () => {
 
   // Column names for the  list students table
   const columns = [
-        {field: 'student_ID', headerName: 'ID', width:'200', flex: 0.5, align: "center", headerAlign: "center"},
+        {field: 'Student_ID', headerName: 'ID', width:'200', flex: 0.5, align: "center", headerAlign: "center"},
         {field: 'Name', headerName: 'Name', width:'200', flex: 1, align: "center", headerAlign: "center"},
         {field: 'Start_Date', headerName: 'Start Date', width:'200', flex: 1, align: "center", headerAlign: "center"},
         {field: 'Program', headerName: 'Program', width:'200', flex: 1, align: "center", headerAlign: "center"},
@@ -53,7 +53,7 @@ export const Students = () => {
 
 
   return (
-    <Paper sx={{minWidth:1400 }}>
+    <Paper sx={{minWidth: '99%' }}>
       <Grid container sx={{ p: '1rem' }}>
         <Grid xs="5">
           <Select
