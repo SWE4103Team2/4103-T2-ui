@@ -23,15 +23,10 @@ export const Students = () => {
     grab a student using their student_ID from the search bar.
   */
   const callGetStudents = async () => {
-    if(searchValue === "") {
-      getStudents(file).then(result => {
-        setStudents(result);
-      })
-    } else {
-      getStudent(searchValue, file).then(result => {
-        setStudents(result);
-      });
-    }
+    getStudents(file, searchValue).then(result => {
+      setStudents(result);
+    });
+    
   };
 
   // Grabbing the file names from the database
@@ -41,6 +36,9 @@ export const Students = () => {
         return <MenuItem value={item.fileID}>{item.fileID}</MenuItem>
       });
       setMenuItems(options);
+      if(result.length !== 0){
+        setFile(result[0].fileID);
+      }
     });
   }, []);
 
