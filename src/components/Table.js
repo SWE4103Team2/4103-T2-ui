@@ -46,12 +46,12 @@ const Table = ({studentRows, names}) => {
          columns={names}
          disableColumnMenu={true}
          hideFooter={false}
-         pageSize={25}
+         autoPageSize
          onRowDoubleClick
          rowHeight={20}
-        //  components={{ // Uncomment this to add a filter button at the top of the table
-        //    Toolbar: customToolbar
-        //  }}
+         components={{ // Uncomment this to add a filter button at the top of the table
+           Toolbar: customToolbar
+         }}
       />
     </div>
   );

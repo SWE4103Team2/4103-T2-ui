@@ -10,7 +10,12 @@ export const getYear = async (file, id, type) => {
   return result.data;
 };
 
-export const getFileNames = async () => {
-  const result = await api.get('/students/getFiles');
+export const getFileNames = async (type) => {
+  const result = await api.get('/students/getFiles', {params: {type}});
+  return result.data;
+};
+
+export const getFileTypes = async () => {
+  const result = await api.get('/students/getFileTypes');
   return result.data;
 };
