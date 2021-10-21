@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem, FormControl } from '@mui/material'; 
+import { Paper, Grid, TextField, Button, Select, MenuItem } from '@mui/material'; 
 
 export const Students = () => {
   const [students, setStudents] = useState([]);
@@ -44,6 +44,7 @@ export const Students = () => {
 
   // Grabbing the file names from the database
   useEffect(() => {
+    if(programType === ""){return;}
     getFileNames(programType).then(result => {
       const options = result.map(item => {
         return <MenuItem value={item.fileID}>{item.fileID}</MenuItem>
@@ -90,15 +91,19 @@ export const Students = () => {
     return asYear + "-" + (asYear+1) + ", " + campus;
   };
 
+  const onRowDoubleClick = (rowData) => {
+    console.log(rowData);
+  };
+
   return (
     <Paper sx={{minWidth: '99%' }}>
       <Grid container sx={{ p: '1rem' }}>
-        <Grid xs="5">
+        <Grid container xs={5} direction='row' justifyContent="flex-start">
           <Select
             variant="outlined"
             size="small"
             value={programType}
-            onChange={(e) => setProgramType(e.target.value)}   
+            onChange={(e) => {setFile(""); setProgramType(e.target.value)}}   
             sx={{ width: '15rem' }}
           >
             {programMenus}
@@ -113,7 +118,7 @@ export const Students = () => {
             {menuItems}
           </Select>  
         </Grid>
-        <Grid container xs="5" md="7" direction='row' justifyContent="flex-end" alignItems="center" >
+        <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
           <Select
             variant="outlined"
             size="small"
@@ -136,7 +141,7 @@ export const Students = () => {
           </Button>
         </Grid>
       </Grid>
-      <Table names={columns} studentRows={students} />
+      <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick}/>
     </Paper>
   );
 };
