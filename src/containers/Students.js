@@ -51,6 +51,13 @@ export const Students = () => {
     }
   }, [students]);
 
+  // Update student list on file change
+  useEffect(() => {
+    const f = async () => {
+      await callGetStudents();
+    }
+    f();
+  }, [file]);
 
   return (
     <Paper sx={{minWidth: '99%' }}>
@@ -60,7 +67,7 @@ export const Students = () => {
             variant="outlined"
             size="small"
             value={file}
-            onChange={(e) => setFile(e.target.value)}   
+            onChange={(e) => {setSearchValue(""); setFile(e.target.value)}}   
             sx={{ width: '15rem' }}
           >
             {menuItems}
@@ -70,6 +77,7 @@ export const Students = () => {
           <TextField 
             label="Search" 
             variant='outlined'
+            value={searchValue}
             size="small"
             onChange={(e) => setSearchValue(e.target.value)}
           />
