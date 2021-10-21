@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
+import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem } from '@mui/material'; 
+import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material'; 
 
 export const Students = () => {
   const [students, setStudents] = useState([]);
@@ -11,6 +12,8 @@ export const Students = () => {
   const [yearType, setYearType] = useState(0);
   const [programType, setProgramType] = useState('');
   const [programMenus, setProgramMenus] = useState([]);
+  const [modalRow, setModalRow] = useState(null);
+  const [modalState, setModalState] = useState(false);
 
   // Column names for the  list students table
   const columns = [
@@ -81,22 +84,34 @@ export const Students = () => {
         case 3: students[i].Rank = "JUN"; break;
         default: students[i].Rank = students[i].Year > 0 ? "SEN" : "N/A";
       }
-      students[i].Status = students[i].Rank === "SEN" ? "Ready to Graduate" : students[i].Rank === "N/A" ? "Unknown" : "In Progress";
+      students[i].Status = "Place Holder";
     }
   }, [students]);
 
   const dateToCohort = (startDate, campus) => {
     let asYear = ((Date.parse(startDate)/31556926000)+1970);
     asYear = asYear%1 > 0.6652 ? Math.floor(asYear) : Math.floor(asYear)-1;
-    return asYear + "-" + (asYear+1) + ", " + campus;
+    return asYear + "-" + ((asYear+1)%100) + campus;
   };
 
   const onRowDoubleClick = (rowData) => {
     console.log(rowData);
+    setModalRow(rowData);
+    setModalState(true);
   };
 
   return (
     <Paper sx={{minWidth: '99%' }}>
+      <Modal
+        open={modalState}
+        onBackdropClick={e => setModalState(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Transcript rowData={modalRow}/>
+        </Box>
+      </Modal>
       <Grid container sx={{ p: '1rem' }}>
         <Grid container xs={5} direction='row' justifyContent="flex-start">
           <Select
@@ -144,4 +159,16 @@ export const Students = () => {
       <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick}/>
     </Paper>
   );
+};
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
 };

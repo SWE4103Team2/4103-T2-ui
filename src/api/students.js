@@ -19,3 +19,8 @@ export const getFileTypes = async () => {
   const result = await api.get('/students/getFileTypes');
   return result.data;
 };
+
+export const getEnrollment = async (file, id) => {
+  const result = await api.get('/students/getEnrollment', {params: {file, id}});
+  return result.data;
+};
