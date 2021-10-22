@@ -11,18 +11,20 @@ export const Students = () => {
   const [yearType, setYearType] = useState(0);
   const [programType, setProgramType] = useState('');
   const [programMenus, setProgramMenus] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Column names for the  list students table
   const columns = [
     {field: 'Student_ID', headerName: 'ID',         flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'FirstName',  headerName: 'First Name', flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'LastName',   headerName: 'Last Name',  flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'ShortName',  headerName: 'Name',       flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'Year',       headerName: 'Year',       flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'Start_Date', headerName: 'Start_Date', flex: 0.5,  align: "center", headerAlign: "center"},
     {field: 'Status',     headerName: 'Status',     flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center"},
+    {field: 'FirstName',  headerName: 'First Name', flex: 1,    align: "center", headerAlign: "center", hide:"true"},
+    {field: 'LastName',   headerName: 'Last Name',  flex: 1,    align: "center", headerAlign: "center", hide:"true"},
+    {field: 'Year',       headerName: 'Year',       flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
+    {field: 'Start_Date', headerName: 'Start Date', flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
+    {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
   ]
 
   /*
@@ -31,6 +33,7 @@ export const Students = () => {
     grab a student using their student_ID from the search bar.
   */
   const callGetStudents = async () => {
+    setLoading(true);
     getStudents(file, searchValue).then(result => {
       getYear(file, searchValue, yearType).then(year => {
         for (let i = 0; i < year.length; i++) {
@@ -75,20 +78,22 @@ export const Students = () => {
       students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
       students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
       students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
+      students[i].ShortName = students[i].LastName + students[i].FirstName[0];
       switch(students[i].Year){
         case 1: students[i].Rank = "FIR"; break;
         case 2: students[i].Rank = "SOP"; break;
         case 3: students[i].Rank = "JUN"; break;
         default: students[i].Rank = students[i].Year > 0 ? "SEN" : "N/A";
       }
-      students[i].Status = students[i].Rank === "SEN" ? "Ready to Graduate" : students[i].Rank === "N/A" ? "Unknown" : "In Progress";
+      students[i].Status = "Place Holder";
     }
+    setLoading(false);
   }, [students]);
 
   const dateToCohort = (startDate, campus) => {
     let asYear = ((Date.parse(startDate)/31556926000)+1970);
     asYear = asYear%1 > 0.6652 ? Math.floor(asYear) : Math.floor(asYear)-1;
-    return asYear + "-" + (asYear+1) + ", " + campus;
+    return asYear + "-" + ((asYear+1)%100) + campus;
   };
 
   const onRowDoubleClick = (rowData) => {
@@ -141,7 +146,7 @@ export const Students = () => {
           </Button>
         </Grid>
       </Grid>
-      <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick}/>
+      <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
     </Paper>
   );
 };
