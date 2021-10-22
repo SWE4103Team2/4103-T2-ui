@@ -53,10 +53,10 @@ export const Students = () => {
 
   // Update student list on file change
   useEffect(() => {
-    const f = async () => {
+    const updateStudentList = async () => {
       await callGetStudents();
     }
-    f();
+    updateStudentList();
   }, [file]);
 
   return (
@@ -67,7 +67,10 @@ export const Students = () => {
             variant="outlined"
             size="small"
             value={file}
-            onChange={(e) => {setSearchValue(""); setFile(e.target.value)}}   
+            onChange={(e) => {
+              setSearchValue(""); 
+              setFile(e.target.value)
+            }}   
             sx={{ width: '15rem' }}
           >
             {menuItems}
