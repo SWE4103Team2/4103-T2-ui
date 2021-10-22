@@ -89,6 +89,7 @@ export const Students = () => {
       students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
       students[i].ShortName = students[i].LastName + students[i].FirstName[0];
       switch(students[i].Year){
+        case 0: students[i].Rank = "FIR"; break;
         case 1: students[i].Rank = "FIR"; break;
         case 2: students[i].Rank = "SOP"; break;
         case 3: students[i].Rank = "JUN"; break;
