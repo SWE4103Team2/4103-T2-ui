@@ -86,7 +86,7 @@ export const Students = () => {
         case 1: students[i].Rank = "FIR"; break;
         case 2: students[i].Rank = "SOP"; break;
         case 3: students[i].Rank = "JUN"; break;
-        default: students[i].Rank = students[i].Year > 0 ? "SEN" : "N/A";
+        default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
       }
       students[i].Status = "Place Holder";
     }
