@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
+import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem } from '@mui/material'; 
+import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material'; 
 
 export const Students = () => {
   const [students, setStudents] = useState([]);
@@ -12,6 +13,8 @@ export const Students = () => {
   const [programType, setProgramType] = useState('');
   const [programMenus, setProgramMenus] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalRow, setModalRow] = useState(null);
+  const [modalState, setModalState] = useState(false);
 
   // Column names for the  list students table
   const columns = [
@@ -98,10 +101,22 @@ export const Students = () => {
 
   const onRowDoubleClick = (rowData) => {
     console.log(rowData);
+    setModalRow(rowData);
+    setModalState(true);
   };
 
   return (
     <Paper sx={{minWidth: '99%' }}>
+      <Modal
+        open={modalState}
+        onBackdropClick={e => setModalState(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Transcript rowData={modalRow}/>
+        </Box>
+      </Modal>
       <Grid container sx={{ p: '1rem' }}>
         <Grid container xs={5} direction='row' justifyContent="flex-start">
           <Select
@@ -149,4 +164,16 @@ export const Students = () => {
       <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
     </Paper>
   );
+};
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
 };
