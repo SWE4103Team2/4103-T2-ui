@@ -100,7 +100,6 @@ export const Students = () => {
   };
 
   const onRowDoubleClick = (rowData) => {
-    console.log(rowData);
     setModalRow(rowData);
     setModalState(true);
   };
