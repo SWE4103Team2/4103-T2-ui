@@ -16,7 +16,7 @@ const Transcript = ({rowData}) => {
         {field: 'Grade',      headerName: 'Grade',        flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Term',       headerName: 'Term',         flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
-        {field: 'Title',      headerName: 'Title',        flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
     ];
 
