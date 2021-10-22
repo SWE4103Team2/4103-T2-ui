@@ -6,11 +6,17 @@ import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
+/**
+ * Transcript Table component
+ * Parameters: a {} with:
+ *    - rowData = A single row from the student table, formatted with atleast the columns listed in this file
+ */
 const Transcript = ({rowData}) => {
   
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
 
+    //List of columns
     const columns = [
         {field: 'Course',     headerName: 'Course ID',    flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Grade',      headerName: 'Grade',        flex: 1,    align: "center", headerAlign: "center"},
@@ -19,7 +25,8 @@ const Transcript = ({rowData}) => {
         {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
     ];
-
+  
+    //toolbar component
   const customToolbar = () => {
     return (
       <GridToolbarContainer>
@@ -28,7 +35,10 @@ const Transcript = ({rowData}) => {
     );
   }
   
-  // Sets the rows variable with the "studentRows" parameter
+  // Turns on the loading indicator
+  // gets the enrollment data from the API for the inputted student
+  // updates the table
+  // turns off the loading indicator
   useEffect(() => {
     setLoading(true);
     getEnrollment(rowData.fileID, rowData.Student_ID).then(result => {
@@ -40,6 +50,7 @@ const Transcript = ({rowData}) => {
     });
   }, [rowData]);
 
+  //Loading bar component
   const loadingBar = () => {
     return <GridOverlay>
       <div style={{ position: 'absolute', top: 0, width: '100%' }}>
@@ -48,6 +59,7 @@ const Transcript = ({rowData}) => {
     </GridOverlay>
   }
 
+  // returns the table, with the student name in the top left
   return (
     <div style={{height:'79vh'}}>
         <Box sx={{
