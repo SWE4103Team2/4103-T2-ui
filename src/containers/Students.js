@@ -48,6 +48,7 @@ export const Students = () => {
   // Grabbing the file names from the database
   useEffect(() => {
     if(programType === ""){return;}
+    setSearchValue(""); 
     getFileNames(programType).then(result => {
       const options = result.map(item => {
         return <MenuItem value={item.fileID}>{item.fileID}</MenuItem>
