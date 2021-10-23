@@ -90,6 +90,7 @@ export const Students = () => {
     setLoading(false);
   }, [students]);
 
+
   const dateToCohort = (startDate, campus) => {
     let asYear = ((Date.parse(startDate)/31556926000)+1970);
     asYear = asYear%1 > 0.6652 ? Math.floor(asYear) : Math.floor(asYear)-1;
@@ -99,6 +100,15 @@ export const Students = () => {
   const onRowDoubleClick = (rowData) => {
     console.log(rowData);
   };
+
+  // Update student list on file change
+  useEffect(() => {
+    const updateStudentList = async () => {
+      await callGetStudents();
+    }
+    updateStudentList();
+  }, [file]);
+
 
   return (
     <Paper sx={{minWidth: '99%' }}>
@@ -117,7 +127,10 @@ export const Students = () => {
             variant="outlined"
             size="small"
             value={file}
-            onChange={(e) => setFile(e.target.value)}   
+            onChange={(e) => {
+              setSearchValue(""); 
+              setFile(e.target.value)
+            }}   
             sx={{ width: '15rem' }}
           >
             {menuItems}
@@ -138,6 +151,7 @@ export const Students = () => {
           <TextField 
             label="Search" 
             variant='outlined'
+            value={searchValue}
             size="small"
             onChange={(e) => setSearchValue(e.target.value)}
           />
