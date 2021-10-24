@@ -1,97 +1,71 @@
 import React, { useState, useEffect } from 'react'
-import { Box, TextField, Input, Button, Paper, Grid, FormHelperText } from '@mui/material';
-import {useDropzone} from 'react-dropzone';
-import DropzoneComponent from 'react-dropzone-component';
+import { TextField, Button, Paper, Grid, Select, MenuItem } from '@mui/material';
+import { DropZone } from '../components/DropZone'
 
 
-export const FileUpload = ({ apiFunction }) => {
+export const FileUpload = () => {
 
-    const [fileName, setFileName] = useState([]);
     const [dataSetName, setDataSetName] = useState(null);
-    const [programName, setProgramName] = useState(null);
-    const {getRootProps, getInputProps, acceptedFiles} = useDropzone();
+    const [programName, setProgramName] = useState("");
+    const [uploaded, setUploaded] = useState(false);
+
+    const programs = [
+        'SWE',
+        'EE',
+        'CHE',
+        'GGE',
+        'ME',
+        'CE',
+        'MULTI'
+    ]
 
     useEffect(() => {
-        const files = acceptedFiles.map((fileObject) => {
-            console.log(fileObject.path);
-            <li>{fileObject.path}</li>
-        });
-        console.log(files);
-        setFileName(files);
-        console.log(acceptedFiles)
-    }, [acceptedFiles]);
-    
+        if(uploaded) setUploaded(false)
+    }, [uploaded])
 
     return (
-        <Paper sx={{minWidth: '35%', maxWidth: '35%', minHeight: '500px'}}>
-            <Grid container direction="column" justifyContent="center" alignItems="center">
-                <Grid item xs="12">
-                    <Box display='flex'>
+        <Paper sx={{minWidth: '30%', maxWidth: '30%', minHeight: '500px'}} >
+            <Grid container xs={12} direction="column" justifyContent="center" alignItems="center">
+                <Grid item sx={{
+                    paddingTop: 5,
+                }}>
+                    
                         <TextField
                             size="small"
-                            placeholder='Dataset Name'
-                            onChange={e => setDataSetName(e.target.value)}
+                            label="DateSet Name"
+                            onChange={(e) => setDataSetName(e.target.value)}
                             sx={{ mr: '0.5rem', marginTop: 2}} />
-                        <TextField
+                        <Select
+                            
                             size="small"
-                            placeholder='Program'
-                            onChange={e => setProgramName(e.target.value)}
-                            sx={{ mr: '0.5rem', marginTop: 2}} />
+                            value={programName}
+                            label="Program"
+                            onChange={(e) => setProgramName(e.target.value)}
+                            sx={{ mr: '0.5rem', marginTop: 2, width: '6rem'}} >
+                            {programs.map((programTitle) => {
+                                return <MenuItem value={programTitle}>{programTitle}</MenuItem>
+                            })}
+                        </Select>
                 
-                    </Box>
+                
                 </Grid>
-                    <Box display='flex'>
-                        {/* <Grid item>
-                                <DropzoneComponent
-                                config={{
-                                    iconFiletypes: ['.txt'],
-                                    showFiletypeIcon: true,
-                                    postUrl: 'no-url'
-                                }}
-                                eventHandler={{addedfile: (fileItem) => console.log(fileItem)}}
-                                djsConfig={{autoProcessQueue: false}}
-                            />
-                        </Grid> */}
-                        <Grid item >
-                            <div {...getRootProps({ className: 'dropzone' })} style={{
-                                border: "black dotted 2px",
-                                borderRadius: "10px",
-                                height: "100px",
-                                
-                            }}>
-                                <input
-                                sx={{ display: '' }}
-                                // onClick={e => e.target.value = null}
-                                // onChange={e => setFile(e.target.files[0])}
-                                accept="text/plain"
-                                type="file"
-                                {...getInputProps()}
-                            />
-                            <p>Drag 'n' drop files here, or click to select files</p>
-                            {console.log(fileName)}
-                            <aside>
-                                <h4>Files</h4>
-                                <ul>
-                                    <li style={{
-                                        marginLeft: 20
-                                    }}>{fileName}</li>
-                                </ul>
-                            </aside>
-                            </div>
-                        </Grid>
-                    </Box>
-                    <Grid>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            component="span"
-                            disabled={!dataSetName && !programName}
-                            sx={{ height: '70%'}}
-                        > 
-                           Submit
-                        </Button>
-                    </Grid>
-            
+                <Grid item sx={{
+                    padding: 11,
+                }}>
+                    <DropZone btnPressed={uploaded} pName={programName} dName={dataSetName} />
+                </Grid>
+                <Grid item >
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        component="span"
+                        disabled={dataSetName && programName ? false : true}
+                        onClick={(e) => setUploaded(true)}
+                        sx={{ height: '100%'}}
+                    > 
+                        Submit
+                    </Button>
+                </Grid>
             </Grid>
         </Paper>
     );

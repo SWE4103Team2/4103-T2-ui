@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Typography, Box } from '@mui/material';
-import { FileUpload } from '../components/FileUpload';
-import { uploadStudents } from '../api/upload';
+// import { FileUpload } from '../components/FileUpload';
+// import { uploadStudents } from '../api/upload';
 import { PC, AC, PA } from '../config/userType.js';
 
 // This is temporary.
@@ -13,7 +13,7 @@ export const Home = ({ user }) => {
       {user === AC && <Typography> Accreditation Coordinators </Typography>}
       {user === PA && <Typography> Program Advisors </Typography>}
       <Box sx={{ m: '5rem'}} />
-      <FileUpload apiFunction={uploadStudents} />
+      {/* <FileUpload apiFunction={uploadStudents} /> */}
     </Paper>
   );
 };

@@ -1,9 +1,7 @@
 import api from './api';
 
-export const uploadStudents = async (fileName, file) => {
-  const form = new FormData();
-  form.append('file', file);
-  const result = await api.post('/upload/students', form, { params: { fileName }});
+export const uploadFilesAPI = async (fileName, files) => {
+  const result = await api.post('/upload/students', { params: { fileName, files }});
 
   return result.data;
 };
