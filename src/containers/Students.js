@@ -23,15 +23,10 @@ export const Students = () => {
     grab a student using their student_ID from the search bar.
   */
   const callGetStudents = async () => {
-    if(searchValue === "") {
-      getStudents(file).then(result => {
-        setStudents(result);
-      })
-    } else {
-      getStudent(searchValue, file).then(result => {
-        setStudents(result);
-      });
-    }
+    
+    getStudents(file).then(result => {
+      setStudents(result);
+    })
   };
 
   // Grabbing the file names from the database
@@ -58,6 +53,26 @@ export const Students = () => {
     }
     updateStudentList();
   }, [file]);
+
+  useEffect(()=> {
+    const delayDebounceFn = setTimeout(() => {
+      //console.log(searchValue)
+      if(searchValue !== "") {
+        getStudent(searchValue, file).then(result => {
+          console.log(result);
+          setStudents(result);
+        });
+      }
+      else {
+        getStudents(file).then(result => {
+          setStudents(result);
+        })
+      }
+    }, 1000)
+
+    return () => clearTimeout(delayDebounceFn)
+
+  }, [searchValue])
 
   return (
     <Paper sx={{minWidth: '99%' }}>
