@@ -5,8 +5,8 @@ export const getStudents = async (file, id) => {
   return result.data;
 };
 
-export const getYear = async (file, id, type) => {
-  const result = await api.get('/students/getYear', {params: {file, id, type}});
+export const getYear = async (file, id, type, userID) => {
+  const result = await api.get('/students/getYear', {params: {file, id, type, userID}});
   return result.data;
 };
 
@@ -22,5 +22,10 @@ export const getFileTypes = async () => {
 
 export const getEnrollment = async (file, id) => {
   const result = await api.get('/students/getEnrollment', {params: {file, id}});
+  return result.data;
+};
+
+export const uploadCoreCoursesArr = async (arr, id) => {
+  const result = await api.get('/students/uploadXLSX', {params: {arr, id}});
   return result.data;
 };

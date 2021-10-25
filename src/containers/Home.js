@@ -3,7 +3,6 @@ import { Paper, Typography, Box } from '@mui/material';
 import { FileUpload } from '../components/FileUpload';
 import { uploadStudents } from '../api/upload';
 import { PC, AC, PA } from '../config/userType.js';
-import { XLSXUpload } from '../components/XLSXUpload';
 
 // This is temporary.
 export const Home = ({ user }) => {
@@ -15,7 +14,6 @@ export const Home = ({ user }) => {
       {user === PA && <Typography> Program Advisors </Typography>}
       <Box sx={{ m: '5rem'}} />
       <FileUpload apiFunction={uploadStudents} />
-      <XLSXUpload setCourseArray={(e) => console.log(e)} />
     </Paper>
   );
 };

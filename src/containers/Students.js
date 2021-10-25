@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
-import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material'; 
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr } from '../api/students';
+import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
+import { XLSXUpload } from '../components/XLSXUpload'; 
 
 /**
  * The student list and transcripts page
@@ -18,6 +19,9 @@ export const Students = () => {
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
   const [modalState, setModalState] = useState(false);
+
+  //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
+  const [userID, setUserID] = useState(1);
 
   // Column names for the  list students table
   const columns = [
@@ -41,7 +45,7 @@ export const Students = () => {
   const callGetStudents = async () => {
     setLoading(true);
     getStudents(file, searchValue).then(result => {
-      getYear(file, searchValue, yearType).then(year => {
+      getYear(file, searchValue, yearType, userID).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
         }
@@ -116,6 +120,14 @@ export const Students = () => {
     setModalState(true);
   };
 
+  const callUploadCoreCoursesArr = (arr) => {
+    const upload = async () => {
+      const data = await uploadCoreCoursesArr(arr, 1);
+      console.log(data);
+    };
+    upload();
+  }
+
   return (
     <Paper sx={{minWidth: '99%' }}>
       <Modal
@@ -150,6 +162,7 @@ export const Students = () => {
           </Select>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
+          <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
           <Select
             variant="outlined"
             size="small"
@@ -159,7 +172,8 @@ export const Students = () => {
           >
           <MenuItem value={0}>{"By Credit Hour"}</MenuItem>
           <MenuItem value={1}>{"By Start Date"}</MenuItem>
-          <MenuItem value={2}>{"By Cohort"}</MenuItem>  
+          <MenuItem value={2}>{"By Cohort"}</MenuItem> 
+          <MenuItem value={3}>{"By Core Course"}</MenuItem>  
           </Select>
           <TextField 
             label="Search" 
