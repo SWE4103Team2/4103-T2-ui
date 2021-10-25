@@ -88,16 +88,33 @@ export const Students = () => {
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
       students[i].id = i+1;
-      students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
-      students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
-      students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
-      students[i].ShortName = students[i].LastName + students[i].FirstName[0];
-      switch(students[i].Year){
-        case 0: students[i].Rank = "FIR"; break;
-        case 1: students[i].Rank = "FIR"; break;
-        case 2: students[i].Rank = "SOP"; break;
-        case 3: students[i].Rank = "JUN"; break;
-        default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
+      if(students[i].Student_ID !== null){
+        students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
+        students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
+        students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
+        students[i].ShortName = students[i].LastName + students[i].FirstName[0];
+        switch(students[i].Year){
+          case 0: students[i].Rank = "FIR"; break;
+          case 1: students[i].Rank = "FIR"; break;
+          case 2: students[i].Rank = "SOP"; break;
+          case 3: students[i].Rank = "JUN"; break;
+          default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
+        }
+        
+      }
+      else{
+        students[i].fileID = file;
+        students[i].Student_ID = students[i].EStuID;
+        students[i].Cohort = "N/A";
+        students[i].Name = "Name Unknown";
+        students[i].FirstName = "Name";
+        students[i].LastName = "Unknown";
+        students[i].ShortName = students[i].LastName + students[i].FirstName[0];
+        students[i].Rank = "N/A";
+        students[i].Year = 0;
+        students[i].Start_Date = "????-??-??";
+        students[i].Program = "??";
+        students[i].Campus = "??";
       }
       students[i].Status = "Place Holder";
     }
