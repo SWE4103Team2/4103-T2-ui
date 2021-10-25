@@ -5,7 +5,6 @@ import { uploadFilesAPI } from '../api/upload'
 import { studentFileHeaders, courseFileHeaders, tranferFileHeaders } from '../config/requiredHeadersForFiles'
 
 export const DropZone = ({btnPressed, pName, dName}) => {
-
     const [fileName, setFileName] = useState("");
     const [files, setFiles] = useState([]);
     const [fileValidation, setFileValidation] = useState(false);
@@ -20,8 +19,12 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     useEffect(() => {
         console.log(btnPressed)
         if(fileValidation && btnPressed) {
-           uploadFilesAPI(dName, pName, files)
-           alert("Files Uploaded")
+            const upload = async () => {
+                await uploadFilesAPI(dName, pName, files);
+                alert("Files Uploaded");
+            };
+
+            upload();
         }
     }, [btnPressed]);
 
