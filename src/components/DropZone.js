@@ -28,7 +28,21 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     setErrorMessage("Successfully uploaded the file(s).");
                 }).catch((error) => {
                     setErrorColor("error");
-                    setErrorMessage("Failed to upload file(s).");
+                    if(error.response.data === 'StudentFileException'){
+                        setErrorMessage("Student File Error");
+                    }
+                    else if(error.response.data === 'CourseFileException'){
+                        setErrorMessage("Course File Error");
+                    }
+                    else if(error.response.data === 'TransferFileException'){
+                        setErrorMessage("Transfer File Error");
+                    }
+                    else if(error.response.data === 'NullFileException'){
+                        setErrorMessage("Missing File(s)");
+                    }
+                    else{
+                        setErrorMessage("Unknown Error");
+                    }
                 });
                 setErrorAlert(true)
             };
@@ -59,7 +73,9 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                         setFileValidation(true);
                     } else {
                         setFileValidation(false);
-                        alert("Error uploading file(s).");
+                        setErrorColor("error");
+                        setErrorMessage("Invalid File(s)");
+                        setErrorAlert(true)
                     }
                 }
                 fileReader.readAsText(file);
