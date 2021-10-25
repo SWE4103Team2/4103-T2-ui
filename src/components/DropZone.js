@@ -10,14 +10,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     const [fileValidation, setFileValidation] = useState(false);
     const {getRootProps, getInputProps, acceptedFiles} = useDropzone();
 
-    const correctFileHeaders = [
-        studentFileHeaders,
-        courseFileHeaders,
-        tranferFileHeaders
-    ]
-
     useEffect(() => {
-        console.log(btnPressed)
         if(fileValidation && btnPressed) {
             const upload = async () => {
                 await uploadFilesAPI(dName, pName, files);
@@ -41,11 +34,16 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     let firstLineOfFile = content.split('\n').shift().replace("\r", "");
                     individualHeadersInFile = firstLineOfFile.split("\t");
 
-                    correctFileHeaders.map((setOfHeaders) => {
-                        if(setOfHeaders.every(r => individualHeadersInFile.includes(r))) {
-                           setFileValidation(true);
-                        }
-                    });
+                    if(studentFileHeaders.every(r => individualHeadersInFile.includes(r))) {
+                        setFileValidation(true);
+                    } else if(courseFileHeaders.every(r => individualHeadersInFile.includes(r))) {
+                        setFileValidation(true);
+                    } else if(tranferFileHeaders.every(r => individualHeadersInFile.includes(r))) {
+                        setFileValidation(true);
+                    } else {
+                        setFileValidation(false);
+                        alert("Error uploading file(s).");
+                    }
                 }
                 fileReader.readAsText(file);
             });
