@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { TextField, Button, Paper, Grid, Select, MenuItem } from '@mui/material';
-import { DropZone } from '../components/DropZone'
-
+import { DropZone } from '../components/DropZone';
 
 export const FileUpload = () => {
 
@@ -26,35 +25,27 @@ export const FileUpload = () => {
     return (
         <Paper sx={{minWidth: '30%', maxWidth: '30%', minHeight: '500px'}} >
             <Grid container xs={12} direction="column" justifyContent="center" alignItems="center">
-                <Grid item sx={{
-                    paddingTop: 5,
-                }}>
-                    
-                        <TextField
-                            size="small"
-                            label="DateSet Name"
-                            onChange={(e) => setDataSetName(e.target.value)}
-                            sx={{ mr: '0.5rem', marginTop: 2}} />
-                        <Select
-                            
-                            size="small"
-                            value={programName}
-                            label="Program"
-                            onChange={(e) => setProgramName(e.target.value)}
-                            sx={{ mr: '0.5rem', marginTop: 2, width: '6rem'}} >
-                            {programs.map((programTitle) => {
-                                return <MenuItem value={programTitle}>{programTitle}</MenuItem>
-                            })}
-                        </Select>
-                
-                
+                <Grid item sx={{ paddingTop: 5 }}>
+                    <TextField
+                        size="small"
+                        label="DateSet Name"
+                        onChange={(e) => setDataSetName(e.target.value)}
+                        sx={{ mr: '0.5rem', marginTop: 2}} />
+                    <Select
+                        size="small"
+                        value={programName}
+                        label="Program"
+                        onChange={(e) => setProgramName(e.target.value)}
+                        sx={{ mr: '0.5rem', marginTop: 2, width: '6rem'}} >
+                        {programs.map((programTitle) => {
+                            return <MenuItem value={programTitle}>{programTitle}</MenuItem>
+                        })}
+                    </Select>
                 </Grid>
-                <Grid item sx={{
-                    padding: 11,
-                }}>
+                <Grid item sx={{ padding: 8 }}>
                     <DropZone btnPressed={uploaded} pName={programName} dName={dataSetName} />
                 </Grid>
-                <Grid item >
+                <Grid item sx={{ padding:5 }}>
                     <Button
                         variant="contained"
                         size="medium"
