@@ -103,22 +103,28 @@ export const Students = () => {
 
   // Update student list on file change
   useEffect(() => {
-    const updateStudentList = async () => {
-      await callGetStudents();
+    if(file !== ""){
+      const updateStudentList = async () => {
+        await callGetStudents();
+      }
+      updateStudentList();
     }
-    updateStudentList();
   }, [file]);
 
   // Search useEffect on list, searches onChange with a sec delay after typing ends
   useEffect(()=> {
-    const delayDebounceFn = setTimeout(() => {
-      getStudent(searchValue, file).then(result => {
-        console.log(result);
-        setStudents(result);
-      });
-    }, 1000)
-
-    return () => clearTimeout(delayDebounceFn)
+    if(file !== ""){
+      const delayDebounceFn = setTimeout(async () => {
+        await callGetStudents();
+        // getStudents(searchValue, file).then(result => {
+        //   console.log(result);
+        //   setStudents(result);
+        // });
+      }, 1000)
+      
+      return () => clearTimeout(delayDebounceFn)
+    }
+    
 
   }, [searchValue]);
 
