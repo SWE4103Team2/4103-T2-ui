@@ -19,6 +19,7 @@ export const Students = () => {
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
   const [modalState, setModalState] = useState(false);
+  const [isSWE, setIsSWE] = useState(false);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -58,6 +59,7 @@ export const Students = () => {
   //updates the file name drop down with the file names for the current program
   //loads nothing if theres no program specified (only ever not specified on page load)
   useEffect(() => {
+    setIsSWE(programType !== "SWE");
     if(programType === ""){return;}
     getFileNames(programType).then(result => {
       const options = result.map(item => {
@@ -190,7 +192,8 @@ export const Students = () => {
           <MenuItem value={0}>{"By Credit Hour"}</MenuItem>
           <MenuItem value={1}>{"By Start Date"}</MenuItem>
           <MenuItem value={2}>{"By Cohort"}</MenuItem> 
-          <MenuItem value={3}>{"By Core Course"}</MenuItem>  
+          <MenuItem value={3}>{"By Core Course"}</MenuItem> 
+          <MenuItem value={4} disabled={isSWE}>{"By SWE Requirements"}</MenuItem>  
           </Select>
           <TextField 
             label="Search" 
