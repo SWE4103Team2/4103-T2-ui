@@ -4,10 +4,12 @@ import { Route } from './Route.js';
 import { Home } from '../../containers/Home.js';
 import { Login } from '../../containers/Login.js';
 import { Students } from '../../containers/Students.js';
+import { FileUpload } from '../../containers/FileUpload.js'
 import {
   ROUTE_HOME,
   ROUTE_LOGIN,
-  ROUTE_STUDENTS
+  ROUTE_STUDENTS,
+  ROUTE_FILEUPLOAD
 } from '../../config/routes.js';
 
 const Router = () => {
@@ -32,6 +34,9 @@ const Router = () => {
       </Route>
       <Route exact path={ROUTE_STUDENTS} user={user}>
         <Students />
+      </Route>
+      <Route exact path={ROUTE_FILEUPLOAD} user={user}>
+        <FileUpload />
       </Route>
     </Switch>
   );
