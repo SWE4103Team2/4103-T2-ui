@@ -40,7 +40,7 @@ export const Students = () => {
   //The year has multiple ways of calculating it, this is specified with the drop down (or with 0,1,2, see API for details)
   const callGetStudents = async () => {
     setLoading(true);
-    getStudents(file, searchValue).then(result => {
+    getStudents(searchValue, file).then(result => {
       getYear(file, searchValue, yearType).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
@@ -48,13 +48,13 @@ export const Students = () => {
         setStudents(result);
       })
     });
-    
   };
 
   //updates the file name drop down with the file names for the current program
   //loads nothing if theres no program specified (only ever not specified on page load)
   useEffect(() => {
     if(programType === ""){return;}
+    setSearchValue(""); 
     getFileNames(programType).then(result => {
       const options = result.map(item => {
         return <MenuItem value={item.fileID}>{item.fileID}</MenuItem>
@@ -116,6 +116,34 @@ export const Students = () => {
     setModalState(true);
   };
 
+  // Update student list on file change
+  useEffect(() => {
+    if(file !== ""){
+      const updateStudentList = async () => {
+        await callGetStudents();
+      }
+      updateStudentList();
+    }
+  }, [file, yearType]);
+
+  // Search useEffect on list, searches onChange with a sec delay after typing ends
+  useEffect(()=> {
+    if(file !== ""){
+      const delayDebounceFn = setTimeout(async () => {
+        await callGetStudents();
+        // getStudents(searchValue, file).then(result => {
+        //   console.log(result);
+        //   setStudents(result);
+        // });
+      }, 1000)
+      
+      return () => clearTimeout(delayDebounceFn)
+    }
+    
+
+  }, [searchValue]);
+
+
   return (
     <Paper sx={{minWidth: '99%' }}>
       <Modal
@@ -143,7 +171,10 @@ export const Students = () => {
             variant="outlined"
             size="small"
             value={file}
-            onChange={(e) => setFile(e.target.value)}   
+            onChange={(e) => {
+              setSearchValue(""); 
+              setFile(e.target.value)
+            }}   
             sx={{ width: '15rem' }}
           >
             {menuItems}
@@ -164,6 +195,7 @@ export const Students = () => {
           <TextField 
             label="Search" 
             variant='outlined'
+            value={searchValue}
             size="small"
             onChange={(e) => setSearchValue(e.target.value)}
           />
