@@ -34,7 +34,7 @@ export const Students = () => {
   */
   const callGetStudents = async () => {
     setLoading(true);
-    getStudents(file, searchValue).then(result => {
+    getStudents(searchValue, file).then(result => {
       getYear(file, searchValue, yearType).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
@@ -42,7 +42,6 @@ export const Students = () => {
         setStudents(result);
       })
     });
-    
   };
 
   // Grabbing the file names from the database
@@ -109,6 +108,19 @@ export const Students = () => {
     }
     updateStudentList();
   }, [file]);
+
+  // Search useEffect on list, searches onChange with a sec delay after typing ends
+  useEffect(()=> {
+    const delayDebounceFn = setTimeout(() => {
+      getStudent(searchValue, file).then(result => {
+        console.log(result);
+        setStudents(result);
+      });
+    }, 1000)
+
+    return () => clearTimeout(delayDebounceFn)
+
+  }, [searchValue]);
 
 
   return (
