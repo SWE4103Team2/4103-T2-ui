@@ -54,9 +54,9 @@ export const Students = () => {
     updateStudentList();
   }, [file]);
 
+  // Search useEffect on list, searches onChange with a sec delay after typing ends
   useEffect(()=> {
     const delayDebounceFn = setTimeout(() => {
-      //console.log(searchValue)
       if(searchValue !== "") {
         getStudent(searchValue, file).then(result => {
           console.log(result);

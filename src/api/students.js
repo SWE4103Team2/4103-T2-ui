@@ -6,8 +6,8 @@ export const getStudents = async (file) => {
   return result.data;
 };
 
-export const getStudent = async (id, file) => {
-  const result = await api.get('/students/getStudent', {params: {id, file}});
+export const getStudent = async (srcVal, file) => {
+  const result = await api.get('/students/getStudent', {params: {srcVal, file}});
 
   return result.data;
 };
