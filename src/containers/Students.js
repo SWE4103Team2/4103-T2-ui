@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
+import CustomSearch from '../components/CustomSearch.js';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr } from '../api/students';
 import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
@@ -18,8 +19,9 @@ export const Students = () => {
   const [programMenus, setProgramMenus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
-  const [modalState, setModalState] = useState(false);
-  const [isSWE, setIsSWE] = useState(false);
+  const [transcriptState, setTranscriptState] = useState(false);
+  const [customSearchState, setCustomSearchState] = useState(false);
+  const [customSearchVal, setCustomSearchVal] = useState({second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0]});
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -46,7 +48,7 @@ export const Students = () => {
   const callGetStudents = async () => {
     setLoading(true);
     getStudents(file, searchValue).then(result => {
-      getYear(file, searchValue, yearType, userID).then(year => {
+      getYear(file, searchValue, yearType, userID, customSearchVal).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
         }
@@ -59,7 +61,6 @@ export const Students = () => {
   //updates the file name drop down with the file names for the current program
   //loads nothing if theres no program specified (only ever not specified on page load)
   useEffect(() => {
-    setIsSWE(programType !== "SWE");
     if(programType === ""){return;}
     getFileNames(programType).then(result => {
       const options = result.map(item => {
@@ -136,7 +137,7 @@ export const Students = () => {
   //is passed into the table
   const onRowDoubleClick = (rowData) => {
     setModalRow(rowData);
-    setModalState(true);
+    setTranscriptState(true);
   };
 
   const callUploadCoreCoursesArr = (arr) => {
@@ -150,13 +151,23 @@ export const Students = () => {
   return (
     <Paper sx={{minWidth: '99%' }}>
       <Modal
-        open={modalState}
-        onBackdropClick={e => setModalState(false)}
+        open={transcriptState}
+        onBackdropClick={e => setTranscriptState(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Transcript rowData={modalRow}/>
+          <Transcript rowData={modalRow} userID={userID}/>
+        </Box>
+      </Modal>
+      <Modal
+        open={customSearchState}
+        //onBackdropClick={e => setCustomSearchState(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <CustomSearch setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
         </Box>
       </Modal>
       <Grid container sx={{ p: '1rem' }}>
@@ -181,6 +192,9 @@ export const Students = () => {
           </Select>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
+          <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {console.log(customSearchVal); setCustomSearchState(true)}}> 
+            Custom Rank
+          </Button>
           <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
           <Select
             variant="outlined"
@@ -193,7 +207,7 @@ export const Students = () => {
           <MenuItem value={1}>{"By Start Date"}</MenuItem>
           <MenuItem value={2}>{"By Cohort"}</MenuItem> 
           <MenuItem value={3}>{"By Core Course"}</MenuItem> 
-          <MenuItem value={4} disabled={isSWE}>{"By SWE Requirements"}</MenuItem>  
+          <MenuItem value={4}>{"By Custom Requirements"}</MenuItem>  
           </Select>
           <TextField 
             label="Search" 

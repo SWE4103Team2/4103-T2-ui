@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
  * Parameters: a {} with:
  *    - rowData = A single row from the student table, formatted with atleast the columns listed in this file
  */
-const Transcript = ({rowData}) => {
+const Transcript = ({rowData, userID}) => {
   
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -24,6 +24,8 @@ const Transcript = ({rowData}) => {
         {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
     ];
   
     //toolbar component
@@ -41,9 +43,36 @@ const Transcript = ({rowData}) => {
   // turns off the loading indicator
   useEffect(() => {
     setLoading(true);
-    getEnrollment(rowData.fileID, rowData.Student_ID).then(result => {
+    getEnrollment(rowData.fileID, rowData.Student_ID, userID).then(result => {
         for(let i = 0; i < result.length; i++){
             result[i].id = i+1;
+            if(result[i].isCore !== null){
+              result[i].Type = "CORE";
+            }
+            else{
+              if(result[i].Course.endsWith("COOP") || result[i].Course.endsWith("PEP")){
+                result[i].Type = "COOP";
+              }
+              else if(result[i].Course.startsWith("CS") || result[i].Course.startsWith("ECE")){
+                result[i].Type = "TE";
+              }
+              else if(result[i].Course.startsWith("APSC") || result[i].Course.startsWith("ASTR") || result[i].Course.startsWith("BIOL") || result[i].Course.startsWith("CHE") || result[i].Course.startsWith("ESCI") || result[i].Course.startsWith("PHYS")){
+                result[i].Type = "BAS SCI";
+              }
+              else {
+                result[i].Type = "CSE - MISC";
+              }
+            }
+            if(result[i].Grade === null){
+              result[i].Passed = "In Progress"
+            }
+            else if(result[i].Grade === 'W' || result[i].Grade === 'WF' || result[i].Grade === 'WD' || result[i].Grade === 'D' || result[i].Grade === 'F' || result[i].Grade === 'NCR'){
+              result[i].Passed = "No Credit"
+            }
+            else{
+              result[i].Passed = "Credit"
+            }
+            
         }
         setRows(result);
         setLoading(false);
@@ -81,7 +110,7 @@ const Transcript = ({rowData}) => {
          columns={columns}
          disableColumnMenu={true}
          hideFooter={false}
-         autoPageSize
+         //autoPageSize
          rowHeight={20}
          loading={loading}
          components={{ // Uncomment this to add a filter button at the top of the table
