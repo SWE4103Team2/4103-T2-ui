@@ -40,6 +40,12 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     else if(error.response.data === 'NullFileException'){
                         setErrorMessage("Missing File(s)");
                     }
+                    else if(error.response.data === 'FileNameExistsException'){
+                        setErrorMessage("File Name Already Exists");
+                    }
+                    else if(error.response.data === 'MissingParameters'){
+                        setErrorMessage("Missing Parameters");
+                    }
                     else{
                         setErrorMessage("Unknown Error");
                     }
@@ -55,6 +61,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     */
     useEffect(() => {
         if(acceptedFiles.length !== 0) { // Process for checking the files that are being uploaded. The validation process. Needs a look over.
+            setFileValidation(true);
             acceptedFiles.map((file) => {
                 let fileReader = new FileReader();
                 let individualHeadersInFile;
@@ -66,11 +73,11 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     individualHeadersInFile = firstLineOfFile.split("\t");
 
                     if(studentFileHeaders.every(r => individualHeadersInFile.includes(r))) {
-                        setFileValidation(true);
+                        files[0] = file;
                     } else if(courseFileHeaders.every(r => individualHeadersInFile.includes(r))) {
-                        setFileValidation(true);
+                        files[1] = file;
                     } else if(tranferFileHeaders.every(r => individualHeadersInFile.includes(r))) {
-                        setFileValidation(true);
+                        files[2] = file;
                     } else {
                         setFileValidation(false);
                         setErrorColor("error");
@@ -83,17 +90,9 @@ export const DropZone = ({btnPressed, pName, dName}) => {
 
             // Listing the files that have been put into the dropzone. Can be either good or bad files.
             const filesStrings = acceptedFiles.map((fileObject) => {
-                if(acceptedFiles.length === 1 || fileObject.path === acceptedFiles[acceptedFiles.length-1].path) {
-                    return fileObject.path;
-                } else {
-                    return fileObject.path + ", ";
-                }
-            
+                    return <div>{fileObject.path}</div>;
             });
-            [files[0], files[1]] = [files[1], files[0]]
             setFileName(filesStrings);
-            setFiles(acceptedFiles);
-
         };
     }, [acceptedFiles]);
 
