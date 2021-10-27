@@ -2,10 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton, GridToolbarColumnsButton, GridOverlay} from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
 
+/**
+ * Student Table component
+ * Parameters: a {} with:
+ *    - studentRows = list of students from the API, formatted with atleast the columns of name
+ *    - name = the column headers
+ *    - doubleClickFunction = a function that dictates what should happen when a row is double clicked
+ *    - loadingIn = if the table should display the loading indicator or not
+ */
 const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  //Loading bar component
   const loadingBar = () => {
     return <GridOverlay>
       <div style={{ position: 'absolute', top: 0, width: '100%' }}>
@@ -14,6 +23,7 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
     </GridOverlay>
   }
 
+  //toolbar component
   const customToolbar = () => {
     return (
       <GridToolbarContainer>
@@ -28,10 +38,12 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
     setRows(studentRows);
   }, [studentRows]);
 
+  // sets if it should display loading or not
   useEffect(() => {
     setLoading(loadingIn);
   }, [loadingIn]);
 
+  //returns the table
   return (
     <div style={{height:'79vh'}}>
       <DataGrid

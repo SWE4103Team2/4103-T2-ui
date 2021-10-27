@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
+import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem } from '@mui/material'; 
+import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material'; 
 
+/**
+ * The student list and transcripts page
+ */
 export const Students = () => {
   const [students, setStudents] = useState([]);
   const [file, setFile] = useState('');
@@ -12,6 +16,8 @@ export const Students = () => {
   const [programType, setProgramType] = useState('');
   const [programMenus, setProgramMenus] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalRow, setModalRow] = useState(null);
+  const [modalState, setModalState] = useState(false);
 
   // Column names for the  list students table
   const columns = [
@@ -27,11 +33,11 @@ export const Students = () => {
     {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
   ]
 
-  /*
-    A call to the API to grab the list of students.
-    Either grab all students in the specific file or
-    grab a student using their student_ID from the search bar.
-  */
+  //Starts the loading animation
+  //gets the list of students for the current fileID
+  //OPTIONALLY if the search bar has content then it will search for the student id for that content
+  //Internally this makes 2 API calls, one for the list of students, and another to get the year
+  //The year has multiple ways of calculating it, this is specified with the drop down (or with 0,1,2, see API for details)
   const callGetStudents = async () => {
     setLoading(true);
     getStudents(searchValue, file).then(result => {
@@ -44,7 +50,8 @@ export const Students = () => {
     });
   };
 
-  // Grabbing the file names from the database
+  //updates the file name drop down with the file names for the current program
+  //loads nothing if theres no program specified (only ever not specified on page load)
   useEffect(() => {
     if(programType === ""){return;}
     setSearchValue(""); 
@@ -59,6 +66,8 @@ export const Students = () => {
     });
   }, [programType]);
 
+  //Only run once when the page loads
+  //adds all the program types to the drop down
   useEffect(() => {
     getFileTypes().then(result => {
       const options = result.map(item => {
@@ -71,7 +80,7 @@ export const Students = () => {
     });
   }, []);
 
-  // Adding a id property to each student in order to add them to the datagrid table.
+  // formats the students list with all the needed data for the list
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
       students[i].id = i+1;
@@ -84,22 +93,27 @@ export const Students = () => {
         case 1: students[i].Rank = "FIR"; break;
         case 2: students[i].Rank = "SOP"; break;
         case 3: students[i].Rank = "JUN"; break;
-        default: students[i].Rank = students[i].Year > 0 ? "SEN" : "N/A";
+        default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
       }
       students[i].Status = "Place Holder";
     }
     setLoading(false);
   }, [students]);
 
-
+  //A function to turn the date to cohort
+  //Any date before sept 1 becomes the previous years cohort
   const dateToCohort = (startDate, campus) => {
     let asYear = ((Date.parse(startDate)/31556926000)+1970);
     asYear = asYear%1 > 0.6652 ? Math.floor(asYear) : Math.floor(asYear)-1;
     return asYear + "-" + ((asYear+1)%100) + campus;
   };
 
+  //Function to open the student transcript
+  //activated in the "Table" component
+  //is passed into the table
   const onRowDoubleClick = (rowData) => {
-    console.log(rowData);
+    setModalRow(rowData);
+    setModalState(true);
   };
 
   // Update student list on file change
@@ -132,6 +146,16 @@ export const Students = () => {
 
   return (
     <Paper sx={{minWidth: '99%' }}>
+      <Modal
+        open={modalState}
+        onBackdropClick={e => setModalState(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Transcript rowData={modalRow}/>
+        </Box>
+      </Modal>
       <Grid container sx={{ p: '1rem' }}>
         <Grid container xs={5} direction='row' justifyContent="flex-start">
           <Select
@@ -183,4 +207,17 @@ export const Students = () => {
       <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
     </Paper>
   );
+};
+
+//The style for the modal
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
 };
