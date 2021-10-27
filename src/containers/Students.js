@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
 import CustomSearch from '../components/CustomSearch.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr } from '../api/students';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses } from '../api/students';
 import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
 
@@ -22,6 +22,7 @@ export const Students = () => {
   const [transcriptState, setTranscriptState] = useState(false);
   const [customSearchState, setCustomSearchState] = useState(false);
   const [customSearchVal, setCustomSearchVal] = useState({second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0]});
+  const [courses, setCourses] = useState([]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -84,6 +85,9 @@ export const Students = () => {
       if(result.length !== 0){
         setProgramType(result[0].program);
       }
+    });
+    getAllCourses().then(result => {
+      setCourses(result);
     });
   }, []);
 
@@ -162,12 +166,12 @@ export const Students = () => {
       </Modal>
       <Modal
         open={customSearchState}
-        //onBackdropClick={e => setCustomSearchState(false)}
+        onBackdropClick={e => setCustomSearchState(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <CustomSearch setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
+          <CustomSearch courses={courses} setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
         </Box>
       </Modal>
       <Grid container sx={{ p: '1rem' }}>

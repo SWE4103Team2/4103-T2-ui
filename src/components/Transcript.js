@@ -19,10 +19,10 @@ const Transcript = ({rowData, userID}) => {
     //List of columns
     const columns = [
         {field: 'Course',     headerName: 'Course ID',    flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Grade',      headerName: 'Grade',        flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Term',       headerName: 'Term',         flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
-        {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
@@ -64,7 +64,12 @@ const Transcript = ({rowData, userID}) => {
               }
             }
             if(result[i].Grade === null){
-              result[i].Passed = "In Progress"
+              if(result[i].Course.endsWith("COOP") || result[i].Course.endsWith("PEP")){
+                result[i].Passed = "Credit";
+              }
+              else{
+                result[i].Passed = "In Progress"
+              }
             }
             else if(result[i].Grade === 'W' || result[i].Grade === 'WF' || result[i].Grade === 'WD' || result[i].Grade === 'D' || result[i].Grade === 'F' || result[i].Grade === 'NCR'){
               result[i].Passed = "No Credit"
