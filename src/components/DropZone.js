@@ -61,6 +61,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     */
     useEffect(() => {
         if(acceptedFiles.length !== 0) { // Process for checking the files that are being uploaded. The validation process. Needs a look over.
+            setErrorAlert(false);
             setFileValidation(true);
             acceptedFiles.map((file) => {
                 let fileReader = new FileReader();
@@ -93,20 +94,8 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     return <div>{fileObject.path}</div>;
             });
             setFileName(filesStrings);
-        };
+        }
     }, [acceptedFiles]);
-
-    /*
-        3 second timer for error display.
-    */
-    useEffect(() => {
-        const timeId = setTimeout(() => { // After 3 seconds set the errorAlert value to false
-          setErrorAlert(false)
-        }, 3000);
-        return () => {
-            clearTimeout(timeId)
-          }
-    }, [errorAlert]);
 
     return (
         <Grid container rowSpacing={3}>
