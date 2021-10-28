@@ -11,7 +11,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     const [errorColor, setErrorColor] = useState("");
     const [errorAlert, setErrorAlert] = useState(false);
     const [files, setFiles] = useState([]);
-    const [fileValidation, setFileValidation] = useState(false);
+    const [fileValidation, setFileValidation] = useState(true);
     const {getRootProps, getInputProps, acceptedFiles} = useDropzone({
         maxFiles:3
     });
@@ -53,6 +53,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                 setErrorAlert(true)
             };
             upload();
+            setFiles([]);
         }
         else if(!fileValidation){
             setErrorColor("error");
