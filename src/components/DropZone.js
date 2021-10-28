@@ -28,7 +28,10 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     setErrorMessage("Successfully uploaded the file(s).");
                 }).catch((error) => {
                     setErrorColor("error");
-                    if(error.response.data === 'StudentFileException'){
+                    if(error.response === undefined){
+                        console.log(error);
+                        setErrorMessage("Unknown Error");
+                    }else if(error.response.data === 'StudentFileException'){
                         setErrorMessage("Student File Error");
                     }
                     else if(error.response.data === 'CourseFileException'){
@@ -66,7 +69,9 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     */
     useEffect(() => {
         if(acceptedFiles.length !== 0) { // Process for checking the files that are being uploaded. The validation process. Needs a look over.
-            setFiles([]);
+            while(files.length > 0) {
+                files.pop();
+            }
             setErrorAlert(false);
             setFileValidation(true);
             acceptedFiles.map((file) => {
