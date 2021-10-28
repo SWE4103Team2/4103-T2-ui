@@ -54,6 +54,11 @@ export const DropZone = ({btnPressed, pName, dName}) => {
             };
             upload();
         }
+        else if(!fileValidation){
+            setErrorColor("error");
+            setErrorMessage("Invalid File(s)");
+            setErrorAlert(true)
+        }
     }, [btnPressed]);
 
     /*
