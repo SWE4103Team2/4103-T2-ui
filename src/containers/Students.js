@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Typography, Select, MenuItem, Modal, Box} from '@mui/material'; 
+import { Paper, Grid, TextField, Select, MenuItem, Modal, Box} from '@mui/material'; 
 
 /**
  * The student list and transcripts page
@@ -181,7 +181,6 @@ export const Students = () => {
           </Select>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
-          <Typography variant='h7' sx={{ m: '.5rem' }}> Rank Organized By: </Typography>
           <Select
             variant="outlined"
             size="small"
