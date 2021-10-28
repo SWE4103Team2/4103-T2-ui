@@ -53,7 +53,6 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                 setErrorAlert(true)
             };
             upload();
-            setFiles([]);
         }
         else if(!fileValidation){
             setErrorColor("error");
@@ -67,6 +66,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
     */
     useEffect(() => {
         if(acceptedFiles.length !== 0) { // Process for checking the files that are being uploaded. The validation process. Needs a look over.
+            setFiles([]);
             setErrorAlert(false);
             setFileValidation(true);
             acceptedFiles.map((file) => {
