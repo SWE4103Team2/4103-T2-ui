@@ -6,7 +6,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import StudentIcon from '@mui/icons-material/PersonSearch';
 import TempIcon from '@mui/icons-material/HighlightOff';
-import { ROUTE_STUDENTS } from '../../config/routes.js';
+import { ROUTE_FILEUPLOAD, ROUTE_STUDENTS } from '../../config/routes.js';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const Item = ({ open, title, icon, route }) => {
   return (
@@ -52,6 +53,7 @@ const Sidebar = () => {
           <Item open={open} title="Page 2" icon={<TempIcon color="secondary" />} route={"/"} />
           <Item open={open} title="Page 3" icon={<TempIcon color="secondary" />} route={"/"} />
           <Item open={open} title="Page 4" icon={<TempIcon color="secondary" />} route={"/"} />
+          <Item open={open} title="Upload File" icon={<FileUploadIcon color="secondary" />} route={ROUTE_FILEUPLOAD} />
         </List>
       </Drawer>
     </Box>  

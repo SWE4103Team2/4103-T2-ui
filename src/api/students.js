@@ -1,19 +1,27 @@
 import api from './api';
 
-export const getStudents = async (file) => {
-  const result = await api.get('/students/', {params: {file}});
-
+export const getStudents = async (srcVal, file) => {
+  const result = await api.get('/students/getStudents', {params: {srcVal, file}});
   return result.data;
 };
 
-export const getStudent = async (id, file) => {
-  const result = await api.get('/students/getStudent', {params: {id, file}});
 
+export const getYear = async (file, id, type) => {
+  const result = await api.get('/students/getYear', {params: {file, id, type}});
   return result.data;
 };
 
-export const getFileNames = async () => {
-  const result = await api.get('/students/getFiles');
+export const getFileNames = async (type) => {
+  const result = await api.get('/students/getFiles', {params: {type}});
+  return result.data;
+};
 
+export const getFileTypes = async () => {
+  const result = await api.get('/students/getFileTypes');
+  return result.data;
+};
+
+export const getEnrollment = async (file, id) => {
+  const result = await api.get('/students/getEnrollment', {params: {file, id}});
   return result.data;
 };
