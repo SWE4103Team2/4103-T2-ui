@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material'; 
+import { Paper, Grid, TextField, Typography, Select, MenuItem, Modal, Box} from '@mui/material'; 
 
 /**
  * The student list and transcripts page
@@ -163,7 +163,7 @@ export const Students = () => {
             size="small"
             value={programType}
             onChange={(e) => {setFile(""); setProgramType(e.target.value)}}   
-            sx={{ width: '15rem' }}
+            sx={{ width: '15rem', mr: '1rem' }}
           >
             {programMenus}
           </Select>  
@@ -181,27 +181,25 @@ export const Students = () => {
           </Select>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
+          <Typography variant='h7' sx={{ m: '.5rem' }}> Rank Organized By: </Typography>
           <Select
             variant="outlined"
             size="small"
             value={yearType}
             onChange={(e) => setYearType(e.target.value)}   
-            sx={{ width: '15rem' }}
+            sx={{ width: '15rem', mr: '1rem' }}
           >
-          <MenuItem value={0}>{"By Credit Hour"}</MenuItem>
-          <MenuItem value={1}>{"By Start Date"}</MenuItem>
-          <MenuItem value={2}>{"By Cohort"}</MenuItem>  
+          <MenuItem value={0}>{"Credit Hour"}</MenuItem>
+          <MenuItem value={1}>{"Start Date"}</MenuItem>
+          <MenuItem value={2}>{"Cohort"}</MenuItem>  
           </Select>
-          <TextField 
+          <TextField
             label="Search" 
             variant='outlined'
             value={searchValue}
             size="small"
             onChange={(e) => setSearchValue(e.target.value)}
           />
-          <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={() => callGetStudents()}> 
-            List Students
-          </Button>
         </Grid>
       </Grid>
       <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
