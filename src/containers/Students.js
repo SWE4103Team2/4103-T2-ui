@@ -3,6 +3,10 @@ import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
 import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
 import { Paper, Grid, TextField, Select, MenuItem, Modal, Box} from '@mui/material'; 
+import CustomSearch from '../components/CustomSearch.js';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses } from '../api/students';
+import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
+import { XLSXUpload } from '../components/XLSXUpload'; 
 
 /**
  * The student list and transcripts page
@@ -17,7 +21,13 @@ export const Students = () => {
   const [programMenus, setProgramMenus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
-  const [modalState, setModalState] = useState(false);
+  const [transcriptState, setTranscriptState] = useState(false);
+  const [customSearchState, setCustomSearchState] = useState(false);
+  const [customSearchVal, setCustomSearchVal] = useState({second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0]});
+  const [courses, setCourses] = useState([]);
+
+  //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
+  const [userID, setUserID] = useState(1);
 
   // Column names for the  list students table
   const columns = [
@@ -41,7 +51,7 @@ export const Students = () => {
   const callGetStudents = async () => {
     setLoading(true);
     getStudents(searchValue, file).then(result => {
-      getYear(file, searchValue, yearType).then(year => {
+      getYear(file, searchValue, yearType, userID, customSearchVal).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
         }
@@ -78,22 +88,42 @@ export const Students = () => {
         setProgramType(result[0].program);
       }
     });
+    getAllCourses().then(result => {
+      setCourses(result);
+    });
   }, []);
 
   // formats the students list with all the needed data for the list
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
       students[i].id = i+1;
-      students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
-      students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
-      students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
-      students[i].ShortName = students[i].LastName + students[i].FirstName[0];
-      switch(students[i].Year){
-        case 0: students[i].Rank = "FIR"; break;
-        case 1: students[i].Rank = "FIR"; break;
-        case 2: students[i].Rank = "SOP"; break;
-        case 3: students[i].Rank = "JUN"; break;
-        default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
+      if(students[i].Student_ID !== null){
+        students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
+        students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
+        students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
+        students[i].ShortName = students[i].LastName + students[i].FirstName[0];
+        switch(students[i].Year){
+          case 0: students[i].Rank = "FIR"; break;
+          case 1: students[i].Rank = "FIR"; break;
+          case 2: students[i].Rank = "SOP"; break;
+          case 3: students[i].Rank = "JUN"; break;
+          default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
+        }
+        
+      }
+      else{
+        students[i].fileID = file;
+        students[i].Student_ID = students[i].EStuID;
+        students[i].Cohort = "N/A";
+        students[i].Name = "Name Unknown";
+        students[i].FirstName = "Name";
+        students[i].LastName = "Unknown";
+        students[i].ShortName = students[i].LastName + students[i].FirstName[0];
+        students[i].Rank = "N/A";
+        students[i].Year = 0;
+        students[i].Start_Date = "????-??-??";
+        students[i].Program = "??";
+        students[i].Campus = "??";
       }
       students[i].Status = "Place Holder";
     }
@@ -113,7 +143,7 @@ export const Students = () => {
   //is passed into the table
   const onRowDoubleClick = (rowData) => {
     setModalRow(rowData);
-    setModalState(true);
+    setTranscriptState(true);
   };
 
   // Update student list on file change
@@ -143,17 +173,34 @@ export const Students = () => {
 
   }, [searchValue]);
 
+  const callUploadCoreCoursesArr = (arr) => {
+    const upload = async () => {
+      const data = await uploadCoreCoursesArr(arr, 1);
+      console.log(data);
+    };
+    upload();
+  }
 
   return (
     <Paper sx={{minWidth: '99%' }}>
       <Modal
-        open={modalState}
-        onBackdropClick={e => setModalState(false)}
+        open={transcriptState}
+        onBackdropClick={e => setTranscriptState(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Transcript rowData={modalRow}/>
+          <Transcript rowData={modalRow} userID={userID}/>
+        </Box>
+      </Modal>
+      <Modal
+        open={customSearchState}
+        onBackdropClick={e => setCustomSearchState(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <CustomSearch courses={courses} setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
         </Box>
       </Modal>
       <Grid container sx={{ p: '1rem' }}>
@@ -181,6 +228,10 @@ export const Students = () => {
           </Select>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
+          <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {console.log(customSearchVal); setCustomSearchState(true)}}> 
+            Custom Rank
+          </Button>
+          <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
           <Select
             variant="outlined"
             size="small"
@@ -188,9 +239,11 @@ export const Students = () => {
             onChange={(e) => setYearType(e.target.value)}   
             sx={{ width: '15rem', mr: '1rem' }}
           >
-          <MenuItem value={0}>{"Credit Hour"}</MenuItem>
-          <MenuItem value={1}>{"Start Date"}</MenuItem>
-          <MenuItem value={2}>{"Cohort"}</MenuItem>  
+          <MenuItem value={0}>{"By Credit Hour"}</MenuItem>
+          <MenuItem value={1}>{"By Start Date"}</MenuItem>
+          <MenuItem value={2}>{"By Cohort"}</MenuItem> 
+          <MenuItem value={3}>{"By Core Course"}</MenuItem> 
+          <MenuItem value={4}>{"By Custom Requirements"}</MenuItem>  
           </Select>
           <TextField
             label="Search" 

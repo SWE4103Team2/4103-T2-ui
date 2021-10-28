@@ -5,9 +5,8 @@ export const getStudents = async (srcVal, file) => {
   return result.data;
 };
 
-
-export const getYear = async (file, id, type) => {
-  const result = await api.get('/students/getYear', {params: {file, id, type}});
+export const getYear = async (file, id, type, userID, searchObject) => {
+  const result = await api.get('/students/getYear', {params: {file, id, type, userID, searchObject}});
   return result.data;
 };
 
@@ -21,7 +20,17 @@ export const getFileTypes = async () => {
   return result.data;
 };
 
-export const getEnrollment = async (file, id) => {
-  const result = await api.get('/students/getEnrollment', {params: {file, id}});
+export const getAllCourses = async () => {
+  const result = await api.get('/students/getAllCourses');
+  return result.data;
+};
+
+export const getEnrollment = async (file, id, userID) => {
+  const result = await api.get('/students/getEnrollment', {params: {file, id, userID}});
+  return result.data;
+};
+
+export const uploadCoreCoursesArr = async (arr, id) => {
+  const result = await api.get('/students/uploadXLSX', {params: {arr, id}});
   return result.data;
 };
