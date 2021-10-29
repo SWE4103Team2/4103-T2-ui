@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
-import { getStudents, getFileNames, getYear, getFileTypes } from '../api/students';
-import { Paper, Grid, TextField, Select, MenuItem, Modal, Box} from '@mui/material'; 
 import CustomSearch from '../components/CustomSearch.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses } from '../api/students';
+import DeleteButton from '../components/DeleteButton';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
 import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
 
@@ -25,6 +24,7 @@ export const Students = () => {
   const [customSearchState, setCustomSearchState] = useState(false);
   const [customSearchVal, setCustomSearchVal] = useState({second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0]});
   const [courses, setCourses] = useState([]);
+  const [deleteUpdater, setDeleteUpdater] = useState(false);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -76,7 +76,7 @@ export const Students = () => {
     });
   }, [programType]);
 
-  //Only run once when the page loads
+  //Only run once when the page loads and when a file is deleted
   //adds all the program types to the drop down
   useEffect(() => {
     getFileTypes().then(result => {
@@ -91,7 +91,7 @@ export const Students = () => {
     getAllCourses().then(result => {
       setCourses(result);
     });
-  }, []);
+  }, [deleteUpdater]);
 
   // formats the students list with all the needed data for the list
   useEffect(() => {
@@ -103,11 +103,11 @@ export const Students = () => {
         students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
         students[i].ShortName = students[i].LastName + students[i].FirstName[0];
         switch(students[i].Year){
-          case 0: students[i].Rank = "FIR"; break;
-          case 1: students[i].Rank = "FIR"; break;
-          case 2: students[i].Rank = "SOP"; break;
-          case 3: students[i].Rank = "JUN"; break;
-          default: students[i].Rank = students[i].Year > 0 ? "SEN" : undefined;
+          case 0: students[i].Rank = "0-FIR"; break;
+          case 1: students[i].Rank = "1-FIR"; break;
+          case 2: students[i].Rank = "2-SOP"; break;
+          case 3: students[i].Rank = "3-JUN"; break;
+          default: students[i].Rank = students[i].Year + (students[i].Year > 0 ? "-SEN" : "-N/A");
         }
         
       }
@@ -119,7 +119,7 @@ export const Students = () => {
         students[i].FirstName = "Name";
         students[i].LastName = "Unknown";
         students[i].ShortName = students[i].LastName + students[i].FirstName[0];
-        students[i].Rank = "N/A";
+        students[i].Rank = "0-N/A";
         students[i].Year = 0;
         students[i].Start_Date = "????-??-??";
         students[i].Program = "??";
@@ -154,7 +154,7 @@ export const Students = () => {
       }
       updateStudentList();
     }
-  }, [file, yearType]);
+  }, [file, yearType, customSearchVal]);
 
   // Search useEffect on list, searches onChange with a sec delay after typing ends
   useEffect(()=> {
@@ -182,7 +182,7 @@ export const Students = () => {
   }
 
   return (
-    <Paper sx={{minWidth: '99%' }}>
+    <Paper sx={{minWidth: 1000, width: '99%', flexWrap: 'wrap'}}>
       <Modal
         open={transcriptState}
         onBackdropClick={e => setTranscriptState(false)}
@@ -225,7 +225,8 @@ export const Students = () => {
             sx={{ width: '15rem' }}
           >
             {menuItems}
-          </Select>  
+          </Select>
+          <DeleteButton apiFunction={deleteFile} fileIDIn={file} setUpdate={setDeleteUpdater} updateState={deleteUpdater}/>  
         </Grid>
         <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
           <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {console.log(customSearchVal); setCustomSearchState(true)}}> 

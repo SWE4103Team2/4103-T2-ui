@@ -1,7 +1,7 @@
 import api from './api';
 
-export const getStudents = async (srcVal, file) => {
-  const result = await api.get('/students/getStudents', {params: {srcVal, file}});
+export const getStudents = async (id, file) => {
+  const result = await api.get('/students/getStudents', {params: {id, file}});
   return result.data;
 };
 
@@ -32,5 +32,10 @@ export const getEnrollment = async (file, id, userID) => {
 
 export const uploadCoreCoursesArr = async (arr, id) => {
   const result = await api.get('/students/uploadXLSX', {params: {arr, id}});
+  return result.data;
+};
+
+export const deleteFile = async (id) => {
+  const result = await api.get('/students/deleteFile', {params: {id}});
   return result.data;
 };
