@@ -3,9 +3,13 @@ import Table from '../components/Table.js';
 import Transcript from '../components/Transcript.js';
 import CustomSearch from '../components/CustomSearch.js';
 import DeleteButton from '../components/DeleteButton';
+import MenuDropDown from '../components/MenuDropDown';
+import InfoPopover from '../components/InfoPopover';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
-import { Paper, Grid, TextField, Button, Select, MenuItem, Modal, Box} from '@mui/material';
+import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel} from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
+import XLSXSnackbar from '../components/XLSXSnackbar.js';
+
 
 /**
  * The student list and transcripts page
@@ -25,6 +29,7 @@ export const Students = () => {
   const [customSearchVal, setCustomSearchVal] = useState({second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0]});
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
+  const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -47,7 +52,7 @@ export const Students = () => {
   //gets the list of students for the current fileID
   //OPTIONALLY if the search bar has content then it will search for the student id for that content
   //Internally this makes 2 API calls, one for the list of students, and another to get the year
-  //The year has multiple ways of calculating it, this is specified with the drop down (or with 0,1,2, see API for details)
+  //The year has multiple ways of calculating it, this is specified with the drop down (or with 0,1,2,3,4 see API for details)
   const callGetStudents = async () => {
     setLoading(true);
     getStudents(searchValue, file).then(result => {
@@ -74,7 +79,7 @@ export const Students = () => {
         setFile(result[0].fileID);
       }
     });
-  }, [programType]);
+  }, [programType, deleteUpdater]);
 
   //Only run once when the page loads and when a file is deleted
   //adds all the program types to the drop down
@@ -157,102 +162,135 @@ export const Students = () => {
   }, [file, yearType, customSearchVal]);
 
   // Search useEffect on list, searches onChange with a sec delay after typing ends
-  useEffect(()=> {
-    if(file !== ""){
-      const delayDebounceFn = setTimeout(async () => {
-        await callGetStudents();
-        // getStudents(searchValue, file).then(result => {
-        //   console.log(result);
-        //   setStudents(result);
-        // });
-      }, 1000)
+  // useEffect(()=> {
+  //   if(file !== ""){
+  //     const delayDebounceFn = setTimeout(async () => {
+  //       await callGetStudents();
+  //       // getStudents(searchValue, file).then(result => {
+  //       //   console.log(result);
+  //       //   setStudents(result);
+  //       // });
+  //     }, 1000)
       
-      return () => clearTimeout(delayDebounceFn)
-    }
+  //     return () => clearTimeout(delayDebounceFn)
+  //   }
     
 
-  }, [searchValue]);
+  // }, [searchValue]);
 
   const callUploadCoreCoursesArr = (arr) => {
-    const upload = async () => {
-      const data = await uploadCoreCoursesArr(arr, 1);
-      console.log(data);
-    };
-    upload();
+    if(arr === undefined){
+      setXLSXAlertInfo([true, "Incorrect file type.", true]);
+    }
+    else if(arr.length > 0){
+      const upload = async () => {
+        const data = await uploadCoreCoursesArr(arr, 1);
+        if(data.insert !== 0){
+          setXLSXAlertInfo([true, "The old " + data.delete + " courses were replaced with " + data.insert + " new ones.", false]);
+        }
+        else{
+          setXLSXAlertInfo([true, "Unable to Insert " + arr.length + " Courses.", true]);
+        }
+      };
+      upload();
+    }
+    else{
+      setXLSXAlertInfo([true, "No courses read from file.", true]);
+    }
   }
 
+  const menuButtons = [
+    <MenuItem><InfoPopover info={"Used to create a custom set of criteria to decide what rank each student should be."} /> <Button fullWidth="true" variant="contained" onClick={e => {setCustomSearchState(true)}}>Custom Rank</Button></MenuItem>,
+    <MenuItem><InfoPopover info={"Used to load the core courses. This function only accepts XLSX files in the format shown on this site. These courses can be used to calculate rank and in the transcripts."} /> <XLSXUpload setCourseArray={callUploadCoreCoursesArr} /></MenuItem>,
+    <MenuItem><InfoPopover info={"Used to delete all the files related to the currently selected File ID."} /> <DeleteButton apiFunction={deleteFile} fileIDIn={file} setUpdate={setDeleteUpdater} updateState={deleteUpdater}/></MenuItem>
+  ]
+
+  const rankRows = [
+    "By Credit Hour",
+    "By Start Date",
+    "By Cohort",
+    "By Core Course",
+    "By Custom Requirements",
+  ]
+
   return (
-    <Paper sx={{minWidth: 1000, width: '99%', flexWrap: 'wrap'}}>
+    <Paper sx={{width: '99%'}}>
       <Modal
         open={transcriptState}
         onBackdropClick={e => setTranscriptState(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={modalStyle}>
           <Transcript rowData={modalRow} userID={userID}/>
         </Box>
       </Modal>
       <Modal
         open={customSearchState}
         onBackdropClick={e => setCustomSearchState(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={modalStyle}>
           <CustomSearch courses={courses} setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
         </Box>
       </Modal>
-      <Grid container sx={{ p: '1rem' }}>
-        <Grid container xs={5} direction='row' justifyContent="flex-start">
-          <Select
-            variant="outlined"
-            size="small"
-            value={programType}
-            onChange={(e) => {setFile(""); setProgramType(e.target.value)}}   
-            sx={{ width: '15rem', mr: '1rem' }}
-          >
-            {programMenus}
-          </Select>  
-          <Select
-            variant="outlined"
-            size="small"
-            value={file}
-            onChange={(e) => {
-              setSearchValue(""); 
-              setFile(e.target.value)
-            }}   
-            sx={{ width: '15rem' }}
-          >
-            {menuItems}
-          </Select>
-          <DeleteButton apiFunction={deleteFile} fileIDIn={file} setUpdate={setDeleteUpdater} updateState={deleteUpdater}/>  
+      <XLSXSnackbar info={XLSXAlertInfo} />
+      <Grid container rowSpacing={2} sx={{ pt: '1.5rem', pb: '0.75rem' }} justifyContent="center" alignItems="center" style={{textAlign:'center'}}>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl>
+            <InputLabel>
+              Program
+            </InputLabel>
+            <Select
+              size="small"
+              value={programType}
+              label="Program"
+              onChange={(e) => {setFile(""); setProgramType(e.target.value)}}   
+              sx={{ width: '15rem'}}
+            >
+              {programMenus}
+            </Select>
+          </FormControl>
         </Grid>
-        <Grid container xs={5} md={7} direction='row' justifyContent="flex-end" alignItems="right" >
-          <Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {console.log(customSearchVal); setCustomSearchState(true)}}> 
-            Custom Rank
-          </Button>
-          <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
-          <Select
-            variant="outlined"
-            size="small"
-            value={yearType}
-            onChange={(e) => setYearType(e.target.value)}   
-            sx={{ width: '15rem', mr: '1rem' }}
-          >
-          <MenuItem value={0}>{"By Credit Hour"}</MenuItem>
-          <MenuItem value={1}>{"By Start Date"}</MenuItem>
-          <MenuItem value={2}>{"By Cohort"}</MenuItem> 
-          <MenuItem value={3}>{"By Core Course"}</MenuItem> 
-          <MenuItem value={4}>{"By Custom Requirements"}</MenuItem>  
-          </Select>
-          <TextField
-            label="Search" 
-            variant='outlined'
-            value={searchValue}
-            size="small"
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl>
+            <InputLabel>
+              File ID
+            </InputLabel>  
+            <Select
+              size="small"
+              value={file}
+              label="File ID"
+              onChange={(e) => {
+                setSearchValue(""); 
+                setFile(e.target.value)
+              }}   
+              sx={{ width: '15rem' }}
+            >
+              {menuItems}
+            </Select>
+          </FormControl>  
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl>
+            <InputLabel>
+              Calculate Rank
+            </InputLabel> 
+            <Select
+              size="small"
+              value={yearType}
+              label="Calculate Rank"
+              onChange={(e) => setYearType(e.target.value)}   
+              sx={{ width: '15rem' }}
+              renderValue={(row) => {return rankRows[row]}}
+            >
+              <MenuItem value={0}><InfoPopover info={"For each 40 passed credit hours, the students rank increases."} /> By Credit Hour</MenuItem>
+              <MenuItem value={3}><InfoPopover info={"Based off the courses in the XLSX file submitted in the \"Extras Menu\"."} /> By Core Course</MenuItem> 
+              <MenuItem value={4}><InfoPopover info={"Based off the criteria from \"Custom Rank\" in the \"Extras Menu\"."} /> By Custom Requirements</MenuItem>  
+              <MenuItem value={1}><InfoPopover info={"Counts the number of years since the student started based off the current date."} /> By Start Date</MenuItem>
+              <MenuItem value={2}><InfoPopover info={"Counts the number of years since the start of the students cohort."} /> By Cohort</MenuItem> 
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <MenuDropDown menuButtonsIn={menuButtons}/>
         </Grid>
       </Grid>
       <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
@@ -261,7 +299,7 @@ export const Students = () => {
 };
 
 //The style for the modal
-const style = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',

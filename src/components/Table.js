@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton, GridToolbarColumnsButton, GridOverlay} from '@mui/x-data-grid';
 import LinearProgress from '@mui/material/LinearProgress';
+import { isMobile } from 'react-device-detect';
 
 /**
  * Student Table component
@@ -44,8 +45,25 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
   }, [loadingIn]);
 
   //returns the table
+  //If the user is on mobile they only need to click the row once and the rows aer a bit bigger, on browser they need to click twice and rows are smaller
   return (
     <div style={{height:'79vh'}}>
+      {isMobile ?
+      <DataGrid
+         rows={rows}
+         columns={names}
+         disableColumnMenu={true}
+         hideFooter={false}
+         autoPageSize
+         onRowClick={e => {doubleClickFunction(e.row)}}
+         rowHeight={30}
+         loading={loading}
+         components={{
+           Toolbar: customToolbar,
+           LoadingOverlay: loadingBar
+         }}
+      />
+      :
       <DataGrid
          rows={rows}
          columns={names}
@@ -55,11 +73,11 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
          onRowDoubleClick={e => {doubleClickFunction(e.row)}}
          rowHeight={20}
          loading={loading}
-         components={{ // Uncomment this to add a filter button at the top of the table
+         components={{
            Toolbar: customToolbar,
            LoadingOverlay: loadingBar
          }}
-      />
+      />}
     </div>
   );
 }

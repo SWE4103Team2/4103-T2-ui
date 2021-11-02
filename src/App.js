@@ -27,6 +27,13 @@ const theme = createTheme({
       default: '#ffffff',
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 700,
+      md: 1150,
+    },
+  },
 });
 
 const App = () => {

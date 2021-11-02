@@ -53,10 +53,13 @@ const Transcript = ({rowData, userID}) => {
               if(result[i].Course.endsWith("COOP") || result[i].Course.endsWith("PEP")){
                 result[i].Type = "COOP";
               }
+              else if(result[i].Course.startsWith("CSE")){
+                result[i].Type = "CSE - MISC";
+              }
               else if(result[i].Course.startsWith("CS") || result[i].Course.startsWith("ECE")){
                 result[i].Type = "TE";
               }
-              else if(result[i].Course.startsWith("APSC") || result[i].Course.startsWith("ASTR") || result[i].Course.startsWith("BIOL") || result[i].Course.startsWith("CHE") || result[i].Course.startsWith("ESCI") || result[i].Course.startsWith("PHYS")){
+              else if(result[i].Course.startsWith("APSC") || result[i].Course.startsWith("ASTR") || result[i].Course.startsWith("BIOL") || result[i].Course.startsWith("CHE") || result[i].Course.startsWith("ESCI") || result[i].Course.startsWith("PHYS") || result[i].Course.startsWith("SCI")){
                 result[i].Type = "BAS SCI";
               }
               else {
