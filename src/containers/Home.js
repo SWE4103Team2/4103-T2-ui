@@ -8,10 +8,12 @@ import { PC, AC, PA } from '../config/userType.js';
 export const Home = ({ user }) => {
   return (
     <Paper sx={{ width: '99%', minHeight: '100%' }}>
-      <Typography sx={{ mr: '0.5rem' }}> Hello </Typography>
-      <Typography> {user.username} </Typography>
+      {user.username === "" ?
+      <Typography sx={{ p: '0.5rem', mr: '0.5rem' }}> Oh no! You dont have a username, what are we going to do?! </Typography>
+      :
+      <Typography sx={{ p: '0.5rem', mr: '0.5rem' }}> Hello, {user.username}</Typography>
+      }
       <Box sx={{ m: '5rem'}} />
-      {/* <FileUpload apiFunction={uploadStudents} /> */}
     </Paper>
   );
 };

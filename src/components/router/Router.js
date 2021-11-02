@@ -26,16 +26,16 @@ const Router = () => {
 
   return (
     <Switch>
-      <Route exact path={ROUTE_HOME} user={user}>
+      <Route exact path={ROUTE_HOME} setUser={setUser}>
         <Home user={user} />
       </Route>
       <Route exact path={ROUTE_LOGIN}>
         <Login setUser={setUser} />
       </Route>
-      <Route exact path={ROUTE_STUDENTS} user={user}>
+      <Route exact path={ROUTE_STUDENTS} setUser={setUser}>
         <Students user={user}/>
       </Route>
-      <Route exact path={ROUTE_FILEUPLOAD} user={user}>
+      <Route exact path={ROUTE_FILEUPLOAD} setUser={setUser}>
         <FileUpload />
       </Route>
     </Switch>
