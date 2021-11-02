@@ -1,12 +1,12 @@
 import api from './api';
 
-export const getStudents = async (id, file) => {
-  const result = await api.get('/students/getStudents', {params: {id, file}});
+export const getStudents = async (studentID, file) => {
+  const result = await api.get('/students/getStudents', {params: {studentID, file}});
   return result.data;
 };
 
-export const getYear = async (file, id, type, userID, searchObject) => {
-  const result = await api.get('/students/getYear', {params: {file, id, type, userID, searchObject}});
+export const getYear = async (file, studentID, type, userID, searchObject) => {
+  const result = await api.get('/students/getYear', {params: {file, studentID, type, userID, searchObject}});
   return result.data;
 };
 
@@ -25,17 +25,17 @@ export const getAllCourses = async () => {
   return result.data;
 };
 
-export const getEnrollment = async (file, id, userID) => {
-  const result = await api.get('/students/getEnrollment', {params: {file, id, userID}});
+export const getEnrollment = async (file, studentID, userID) => {
+  const result = await api.get('/students/getEnrollment', {params: {file, studentID, userID}});
   return result.data;
 };
 
-export const uploadCoreCoursesArr = async (arr, id) => {
-  const result = await api.get('/students/uploadXLSX', {params: {arr, id}});
+export const uploadCoreCoursesArr = async (arr, userID) => {
+  const result = await api.get('/students/uploadXLSX', {params: {arr, userID}});
   return result.data;
 };
 
-export const deleteFile = async (id) => {
-  const result = await api.get('/students/deleteFile', {params: {id}});
+export const deleteFile = async (file) => {
+  const result = await api.get('/students/deleteFile', {params: {file}});
   return result.data;
 };
