@@ -9,9 +9,7 @@ export const Home = ({ user }) => {
   return (
     <Paper sx={{ width: '99%', minHeight: '100%' }}>
       <Typography sx={{ mr: '0.5rem' }}> Hello </Typography>
-      {user === PC && <Typography> Program Coordinator </Typography>}
-      {user === AC && <Typography> Accreditation Coordinators </Typography>}
-      {user === PA && <Typography> Program Advisors </Typography>}
+      <Typography> {user.username} </Typography>
       <Box sx={{ m: '5rem'}} />
       {/* <FileUpload apiFunction={uploadStudents} /> */}
     </Paper>

@@ -14,7 +14,7 @@ import XLSXSnackbar from '../components/XLSXSnackbar.js';
 /**
  * The student list and transcripts page
  */
-export const Students = () => {
+export const Students = ({user}) => {
   const [students, setStudents] = useState([]);
   const [file, setFile] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -34,6 +34,11 @@ export const Students = () => {
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
 
+  useEffect(() => {
+    if(user.userID){
+      setUserID(user.userID);
+    }
+  }, [user]);
   // Column names for the  list students table
   const columns = [
     {field: 'Student_ID', headerName: 'ID',         flex: 0.5,  align: "center", headerAlign: "center"},
@@ -184,7 +189,7 @@ export const Students = () => {
     }
     else if(arr.length > 0){
       const upload = async () => {
-        const data = await uploadCoreCoursesArr(arr, 1);
+        const data = await uploadCoreCoursesArr(arr, userID);
         if(data.insert !== 0){
           setXLSXAlertInfo([true, "The old " + data.delete + " courses were replaced with " + data.insert + " new ones.", false]);
         }

@@ -33,7 +33,7 @@ const Router = () => {
         <Login setUser={setUser} />
       </Route>
       <Route exact path={ROUTE_STUDENTS} user={user}>
-        <Students />
+        <Students user={user}/>
       </Route>
       <Route exact path={ROUTE_FILEUPLOAD} user={user}>
         <FileUpload />
