@@ -21,8 +21,9 @@ export const Login = ({ setUser }) => {
   }
 
   const handleLogin = () => {
-    getUser(username, getSHA256(password)).then(result => {
+    getUser(getSHA256(username), getSHA256(password)).then(result => {
       if(result.length !== 0){
+        result[0].username = username;
         setUser(result[0]);
         history.push(ROUTE_HOME);
       }
@@ -57,6 +58,11 @@ export const Login = ({ setUser }) => {
           type="text"
           value={username}
           size="small"
+          onKeyPress={(e) => {
+            if(e.key === "Enter"){
+              console.log(getSHA256(username));
+            }
+          }}
           onChange={(e) => setUsername(e.target.value)}
           sx={{ width: '15rem' }}
         />
