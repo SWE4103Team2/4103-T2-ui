@@ -25,7 +25,7 @@ export const XLSXUpload = ({setCourseArray}) => {
           /* Convert array of arrays */
           const data = XLSX.utils.sheet_to_json(ws, {header:1});
           /* Update state */
-          setCourseArray(parseData(data))
+          setCourseArray(parseData2(data))
 
       };
       reader.readAsArrayBuffer(file);
@@ -75,6 +75,45 @@ export const XLSXUpload = ({setCourseArray}) => {
     };
     return output;
   };
+
+  /** 
+   * A more versitile function than the one above
+   * about 2x slower (although thats 0.20ms for the old and 0.40ms for the new, so this is better)
+   * This function checks every element of the XLSX file, so might be slower than above
+   * This uses regex to find every course
+   * it actually finds every instance where there is 1-4 letters (not case sensitive) then a single optional space (change the ? after \s to * to have any number of spaces) then 4 numbers
+  */
+  const parseData2 = (dataIn) => {
+    let output = [];
+    let curID;
+    let matches;
+    //Loop through every element
+    for(let i = 0, iSize = dataIn.length, j, jSize; i < iSize; i++){
+      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+        //ensure the element exists
+        if(dataIn[i][j] !== undefined){
+          //ensure the element is a string (regex errors otherwise)
+          if(typeof dataIn[i][j] === "string"){
+            //grab all the matches (doesnt reuse characters)
+            matches = dataIn[i][j].match(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/);
+            //ensures matches were found
+            if(matches){
+              //loops through every match
+              matches.forEach((course) => {
+                //formates the tag removing the start part
+                curID = correctCourseID(course.trim());
+                //If that position was valid (which is probably will be at this point) it adds it to the output          
+                if(curID !== null){                             
+                  output.push(curID); 
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
 
   /**
    * This function is used to help the above one
