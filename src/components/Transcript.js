@@ -5,6 +5,7 @@ import { getEnrollment } from '../api/students';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import InfoPopover from './InfoPopover';
 
 /**
  * Transcript Table component
@@ -80,14 +81,20 @@ const Transcript = ({rowData, userID}) => {
                 result[i].Passed = "Credit";
               }
               else{
-                result[i].Passed = "In Progress"
+                result[i].Passed = "In Progress";
               }
             }
+            else if(result[i].Notes_Codes === '#'){
+              result[i].Passed = "On Appeal";
+            }
+            else if(result[i].Notes_Codes === 'X'){
+              result[i].Passed = "Extra";
+            }
             else if(result[i].Grade === 'W' || result[i].Grade === 'WF' || result[i].Grade === 'WD' || result[i].Grade === 'D' || result[i].Grade === 'F' || result[i].Grade === 'NCR'){
-              result[i].Passed = "No Credit"
+              result[i].Passed = "No Credit";
             }
             else{
-              result[i].Passed = "Credit"
+              result[i].Passed = "Credit";
             }
             
         }

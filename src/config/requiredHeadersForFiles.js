@@ -14,7 +14,8 @@ export const courseFileHeaders = [
     "Grade", 
     "Credit_Hrs", 
     "Grade_Pts", 
-    "Section"
+    "Section",
+    "Notes_Codes"
 ]
 export const tranferFileHeaders = [
     "Student_ID", 
