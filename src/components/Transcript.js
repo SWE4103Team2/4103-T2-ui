@@ -72,6 +72,9 @@ const Transcript = ({rowData, userID}) => {
               else if(result[i].Course.startsWith("ADM") || result[i].Course.startsWith("ECON") || result[i].Course.startsWith("ENGL") || result[i].Course.startsWith("GER") || result[i].Course.startsWith("JPNS") || result[i].Course.startsWith("PSYC") || result[i].Course.startsWith("TME")){
                 result[i].Type = "CSE - OPEN";
               }
+              else if(result[i].Course.startsWith("BLCK")){
+                result[i].Type = "BLOCK";
+              }
               else {
                 result[i].Type = "CSE - MISC";
               }
