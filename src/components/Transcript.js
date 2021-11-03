@@ -54,13 +54,22 @@ const Transcript = ({rowData, userID}) => {
                 result[i].Type = "COOP";
               }
               else if(result[i].Course.startsWith("CSE")){
-                result[i].Type = "CSE - MISC";
+                result[i].Type = "CSE - HSS";
               }
               else if(result[i].Course.startsWith("CS") || result[i].Course.startsWith("ECE")){
                 result[i].Type = "TE";
               }
               else if(result[i].Course.startsWith("APSC") || result[i].Course.startsWith("ASTR") || result[i].Course.startsWith("BIOL") || result[i].Course.startsWith("CHE") || result[i].Course.startsWith("ESCI") || result[i].Course.startsWith("PHYS") || result[i].Course.startsWith("SCI")){
                 result[i].Type = "BAS SCI";
+              }
+              else if(result[i].Course.startsWith("ENV") || result[i].Course.startsWith("RCLP") || result[i].Course.startsWith("SOCI") || result[i].Course.startsWith("STS")){
+                result[i].Type = "CSE - ITS";
+              }
+              else if(result[i].Course.startsWith("ANTH") || result[i].Course.startsWith("CLAS") || result[i].Course.startsWith("HIST") || result[i].Course.startsWith("PHIL") || result[i].Course.startsWith("POLS") || result[i].Course.startsWith("ARTS")|| result[i].Course.startsWith("HUM")){
+                result[i].Type = "CSE - HSS";
+              }
+              else if(result[i].Course.startsWith("ADM") || result[i].Course.startsWith("ECON") || result[i].Course.startsWith("ENGL") || result[i].Course.startsWith("GER") || result[i].Course.startsWith("JPNS") || result[i].Course.startsWith("PSYC") || result[i].Course.startsWith("TME")){
+                result[i].Type = "CSE - OPEN";
               }
               else {
                 result[i].Type = "CSE - MISC";
