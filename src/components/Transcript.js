@@ -6,13 +6,14 @@ import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import InfoPopover from './InfoPopover';
+import MissingStudentMakerModal from './MissingStudentMakerModal';
 
 /**
  * Transcript Table component
  * Parameters: a {} with:
  *    - rowData = A single row from the student table, formatted with atleast the columns listed in this file
  */
-const Transcript = ({rowData, userID}) => {
+const Transcript = ({rowData, userID, programIn}) => {
   
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -123,6 +124,7 @@ const Transcript = ({rowData, userID}) => {
           '& hr': {
             mx: 2,
           }}}>
+            <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Name}</Typography>
             <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Student_ID}</Typography>
@@ -130,6 +132,8 @@ const Transcript = ({rowData, userID}) => {
             <Typography variant={"h5"}>{rowData.Cohort}</Typography>
             <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Rank}</Typography>
+            <Divider orientation="vertical" flexItem />
+            {rowData.Missing && <MissingStudentMakerModal rowData={rowData} programIn={programIn}/>}
         </Box>
         
       <DataGrid

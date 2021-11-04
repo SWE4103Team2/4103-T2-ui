@@ -6,7 +6,7 @@ import DeleteButton from '../components/DeleteButton';
 import MenuDropDown from '../components/MenuDropDown';
 import InfoPopover from '../components/InfoPopover';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
-import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel} from '@mui/material';
+import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel,} from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
 import XLSXSnackbar from '../components/XLSXSnackbar.js';
 
@@ -107,7 +107,7 @@ export const Students = ({user}) => {
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
       students[i].id = i+1;
-      if(students[i].Student_ID !== null){
+      if(students[i].Student_ID){
         students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
         students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
         students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
@@ -134,6 +134,7 @@ export const Students = ({user}) => {
         students[i].Start_Date = "????-??-??";
         students[i].Program = "??";
         students[i].Campus = "??";
+        students[i].Missing = true;
       }
       students[i].Status = "Place Holder";
     }
@@ -225,7 +226,7 @@ export const Students = ({user}) => {
         onBackdropClick={e => setTranscriptState(false)}
       >
         <Box sx={modalStyle}>
-          <Transcript rowData={modalRow} userID={userID}/>
+          <Transcript rowData={modalRow} userID={userID} programIn={programType}/>
         </Box>
       </Modal>
       <Modal
@@ -298,7 +299,11 @@ export const Students = ({user}) => {
           <MenuDropDown menuButtonsIn={menuButtons}/>
         </Grid>
       </Grid>
-      <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+      <Grid container rowSpacing={2}  justifyContent="center" sx={{ pb: '1rem'}} alignItems="center" style={{textAlign:'center'}}>
+        <Grid item xs={12} sm={12} md={12} sx={{ pl: '1rem', pr: '1rem'}}>
+          <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+        </Grid>
+      </Grid>
     </Paper>
   );
 };

@@ -35,6 +35,11 @@ export const uploadCoreCoursesArr = async (arr, userID) => {
   return result.data;
 };
 
+export const addSingleStudent = async (stuObject) => {
+  const result = await api.get('/students/addSingleStudent', {params: {stuObject}});
+  return result.data;
+};
+
 export const deleteFile = async (file) => {
   const result = await api.get('/students/deleteFile', {params: {file}});
   return result.data;
