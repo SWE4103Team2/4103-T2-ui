@@ -5,13 +5,15 @@ import { getEnrollment } from '../api/students';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import InfoPopover from './InfoPopover';
+import MissingStudentMakerModal from './MissingStudentMakerModal';
 
 /**
  * Transcript Table component
  * Parameters: a {} with:
  *    - rowData = A single row from the student table, formatted with atleast the columns listed in this file
  */
-const Transcript = ({rowData}) => {
+const Transcript = ({rowData, userID, programIn}) => {
   
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -19,11 +21,13 @@ const Transcript = ({rowData}) => {
     //List of columns
     const columns = [
         {field: 'Course',     headerName: 'Course ID',    flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Grade',      headerName: 'Grade',        flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Term',       headerName: 'Term',         flex: 1,    align: "center", headerAlign: "center"},
         {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
-        {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
         {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
+        {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
     ];
   
     //toolbar component
@@ -41,9 +45,62 @@ const Transcript = ({rowData}) => {
   // turns off the loading indicator
   useEffect(() => {
     setLoading(true);
-    getEnrollment(rowData.fileID, rowData.Student_ID).then(result => {
+    getEnrollment(rowData.fileID, rowData.Student_ID, userID).then(result => {
         for(let i = 0; i < result.length; i++){
             result[i].id = i+1;
+            if(result[i].isCore !== null){
+              result[i].Type = "CORE";
+            }
+            else{
+              if(result[i].Course.endsWith("COOP") || result[i].Course.endsWith("PEP")){
+                result[i].Type = "COOP";
+              }
+              else if(result[i].Course.startsWith("CSE")){
+                result[i].Type = "CSE - HSS";
+              }
+              else if(result[i].Course.startsWith("CS") || result[i].Course.startsWith("ECE")){
+                result[i].Type = "TE";
+              }
+              else if(result[i].Course.startsWith("APSC") || result[i].Course.startsWith("ASTR") || result[i].Course.startsWith("BIOL") || result[i].Course.startsWith("CHE") || result[i].Course.startsWith("ESCI") || result[i].Course.startsWith("PHYS") || result[i].Course.startsWith("SCI")){
+                result[i].Type = "BAS SCI";
+              }
+              else if(result[i].Course.startsWith("ENV") || result[i].Course.startsWith("RCLP") || result[i].Course.startsWith("SOCI") || result[i].Course.startsWith("STS")){
+                result[i].Type = "CSE - ITS";
+              }
+              else if(result[i].Course.startsWith("ANTH") || result[i].Course.startsWith("CLAS") || result[i].Course.startsWith("HIST") || result[i].Course.startsWith("PHIL") || result[i].Course.startsWith("POLS") || result[i].Course.startsWith("ARTS")|| result[i].Course.startsWith("HUM")){
+                result[i].Type = "CSE - HSS";
+              }
+              else if(result[i].Course.startsWith("ADM") || result[i].Course.startsWith("ECON") || result[i].Course.startsWith("ENGL") || result[i].Course.startsWith("GER") || result[i].Course.startsWith("JPNS") || result[i].Course.startsWith("PSYC") || result[i].Course.startsWith("TME")){
+                result[i].Type = "CSE - OPEN";
+              }
+              else if(result[i].Course.startsWith("BLCK")){
+                result[i].Type = "BLOCK";
+              }
+              else {
+                result[i].Type = "CSE - MISC";
+              }
+            }
+            if(result[i].Grade === null){
+              if(result[i].Course.endsWith("COOP") || result[i].Course.endsWith("PEP")){
+                result[i].Passed = "Credit";
+              }
+              else{
+                result[i].Passed = "In Progress";
+              }
+            }
+            else if(result[i].Notes_Codes === '#'){
+              result[i].Passed = "On Appeal";
+            }
+            else if(result[i].Notes_Codes === 'X'){
+              result[i].Passed = "Extra";
+            }
+            else if(result[i].Grade === 'W' || result[i].Grade === 'WF' || result[i].Grade === 'WD' || result[i].Grade === 'D' || result[i].Grade === 'F' || result[i].Grade === 'NCR'){
+              result[i].Passed = "No Credit";
+            }
+            else{
+              result[i].Passed = "Credit";
+            }
+            
         }
         setRows(result);
         setLoading(false);
@@ -67,6 +124,7 @@ const Transcript = ({rowData}) => {
           '& hr': {
             mx: 2,
           }}}>
+            <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Name}</Typography>
             <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Student_ID}</Typography>
@@ -74,6 +132,8 @@ const Transcript = ({rowData}) => {
             <Typography variant={"h5"}>{rowData.Cohort}</Typography>
             <Divider orientation="vertical" flexItem />
             <Typography variant={"h5"}>{rowData.Rank}</Typography>
+            <Divider orientation="vertical" flexItem />
+            {rowData.Missing && <MissingStudentMakerModal rowData={rowData} programIn={programIn}/>}
         </Box>
         
       <DataGrid
@@ -81,7 +141,7 @@ const Transcript = ({rowData}) => {
          columns={columns}
          disableColumnMenu={true}
          hideFooter={false}
-         autoPageSize
+         //autoPageSize
          rowHeight={20}
          loading={loading}
          components={{ // Uncomment this to add a filter button at the top of the table
