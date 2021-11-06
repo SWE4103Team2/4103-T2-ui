@@ -111,7 +111,7 @@ export const Students = ({user}) => {
         students[i].Cohort = dateToCohort(students[i].Start_Date, students[i].Campus);
         students[i].FirstName = students[i].Name.substring(0, students[i].Name.indexOf(' '));
         students[i].LastName = students[i].Name.substring(students[i].Name.lastIndexOf(' ')+1);
-        students[i].ShortName = students[i].LastName + students[i].FirstName[0];
+        students[i].ShortName = students[i].LastName + (students[i].FirstName[0] ? students[i].FirstName[0] : "");
         switch(students[i].Year){
           case 0: students[i].Rank = "0-FIR"; break;
           case 1: students[i].Rank = "1-FIR"; break;

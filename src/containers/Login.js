@@ -4,6 +4,7 @@ import { Stack, Button, TextField, Paper, Collapse, Alert } from '@mui/material'
 import { ROUTE_HOME } from '../config/routes.js'
 import { AC, PA, PC } from '../config/userType.js';
 import { getUser } from '../api/login';
+const crypto = require('crypto');
 
 export const Login = ({ setUser }) => {
   const history = useHistory();
@@ -15,7 +16,6 @@ export const Login = ({ setUser }) => {
   const [errorColor, setErrorColor] = useState("");
   const [errorAlert, setErrorAlert] = useState(false);
 
-  const crypto = require('crypto');
   const getSHA256 = function(input){
     return crypto.createHash('sha256').update(input).digest('hex')
   }
