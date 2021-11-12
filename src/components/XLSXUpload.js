@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Input, Button } from '@mui/material';
 import XLSX from 'xlsx';
 
-export const XLSXUpload = ({setCourseArray}) => {
+const XLSXUpload = ({ setCourseArray }) => {
   const [file, setFile] = useState(null);
 
   /**
@@ -19,11 +19,14 @@ export const XLSXUpload = ({setCourseArray}) => {
           /* Parse data */
           const ab = e.target.result;
           const wb = XLSX.read(ab, {type:'array'});
+
           /* Get first worksheet */
           const wsname = wb.SheetNames[0];
           const ws = wb.Sheets[wsname];
+
           /* Convert array of arrays */
-          const data = XLSX.utils.sheet_to_json(ws, {header:1});
+          const data = XLSX.utils.sheet_to_json(ws, { header:1 });
+
           /* Update state */
           setCourseArray(parseData2(data))
 
@@ -35,11 +38,12 @@ export const XLSXUpload = ({setCourseArray}) => {
       return;
     }
   }
-  /** 
-   * Haha, so this is a bit of a trash function but the file it reads is also wack
-   * The way its setup is kind of good at reading different tables, but not really, read on to see
-   * It might be best to have the file open while reading this function
-  */
+
+/*
+  Haha, so this is a bit of a trash function but the file it reads is also wack
+  The way its setup is kind of good at reading different tables, but not really, read on to see
+  It might be best to have the file open while reading this function
+
   const parseData = (dataIn) => {
     let output = [];
     let curID;
@@ -75,6 +79,7 @@ export const XLSXUpload = ({setCourseArray}) => {
     };
     return output;
   };
+*/
 
   /** 
    * A more versitile function than the one above
@@ -85,24 +90,18 @@ export const XLSXUpload = ({setCourseArray}) => {
   */
   const parseData2 = (dataIn) => {
     let output = [];
-    let curID;
-    let matches;
-    //Loop through every element
+
     for(let i = 0, iSize = dataIn.length, j, jSize; i < iSize; i++){
       for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
-        //ensure the element exists
         if(dataIn[i][j] !== undefined){
-          //ensure the element is a string (regex errors otherwise)
           if(typeof dataIn[i][j] === "string"){
             //grab all the matches (doesnt reuse characters)
-            matches = dataIn[i][j].match(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/);
-            //ensures matches were found
+            const matches = dataIn[i][j].match(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/);
+
             if(matches){
-              //loops through every match
               matches.forEach((course) => {
-                //formates the tag removing the start part
-                curID = correctCourseID(course.trim());
-                //If that position was valid (which is probably will be at this point) it adds it to the output          
+                const curID = correctCourseID(course.trim());
+
                 if(curID !== null){                             
                   output.push(curID); 
                 }
@@ -115,33 +114,29 @@ export const XLSXUpload = ({setCourseArray}) => {
     return output;
   }
 
-  /**
-   * This function is used to help the above one
-   * This formats the course id to the same style we use in the database
-   */
+  // Formats Corse ID to Database Format
   const correctCourseID = (crsID) => {
-    //find the start of the course number
     let numStartIndex = crsID.search(/\d/);
-    //if there is no course number return null, as its not a course (Probably, hopefully)
+
     if(numStartIndex === -1){
         return null;
     }
-    //Cover the edge case where the engg courses arent titled correctly, this is the only one i noticed wrong
+
+    // Cover the edge case where the engg courses arent titled correctly
     if(crsID.startsWith("ENG") && crsID[3] !== 'G'){
       crsID = crsID.slice(0, 3) + 'G' + crsID.slice(3, crsID.length);
       numStartIndex++;
     }
+
     //If theres not space between the number and the course type put a * there
     if(crsID[numStartIndex-1] !== ' '){
         return crsID.slice(0, numStartIndex) + '*' + crsID.slice(numStartIndex, numStartIndex+4);
     }
+
     //If theres a space between the number and the course type replace it with a *
     return crsID.slice(0, numStartIndex-1) + '*' + crsID.slice(numStartIndex, numStartIndex+4);
   };
 
-  /**
-   * handles file input
-   */
   useEffect(() => {
     if (file) {
       const upload = async () => {
@@ -150,6 +145,7 @@ export const XLSXUpload = ({setCourseArray}) => {
       };
       upload();
     }
+    // eslint-disable-next-line
   }, [file]);
 
   return (
@@ -173,3 +169,5 @@ export const XLSXUpload = ({setCourseArray}) => {
     </Box>
   );
 };
+
+export default XLSXUpload;

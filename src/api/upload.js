@@ -1,5 +1,6 @@
 import api from './api';
 
+// Uploads Files to Database
 export const uploadFilesAPI = async (fileName, program, files) => {
   const form = new FormData();
 

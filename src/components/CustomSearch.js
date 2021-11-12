@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -9,18 +9,17 @@ import Grid from '@mui/material/Grid';
  * CustomSearch
  */
 const CustomSearch = ({courses, setModalVisible, setSearchObject, searchObjectIn}) => {
-    
     const searchObject = {second: searchObjectIn.second, third: searchObjectIn.third, fourth: searchObjectIn.fourth, creditHoursPer: searchObjectIn.creditHoursPer, minCoursePer: searchObjectIn.minCoursePer};
     const minCoursePer = [searchObjectIn.second.length-searchObjectIn.minCoursePer[0], searchObjectIn.third.length-searchObjectIn.minCoursePer[1], searchObjectIn.fourth.length-searchObjectIn.minCoursePer[2]];
     
     const handleSave = () => {
-        searchObject.creditHoursPer[0] = searchObject.creditHoursPer[0] <= 0                              ? 0                              : searchObject.creditHoursPer[0];
+        searchObject.creditHoursPer[0] = searchObject.creditHoursPer[0] <= 0 ? 0 : searchObject.creditHoursPer[0];
         searchObject.creditHoursPer[1] = searchObject.creditHoursPer[1] <= searchObject.creditHoursPer[0] ? searchObject.creditHoursPer[0] : searchObject.creditHoursPer[1];
         searchObject.creditHoursPer[2] = searchObject.creditHoursPer[2] <= searchObject.creditHoursPer[1] ? searchObject.creditHoursPer[1] : searchObject.creditHoursPer[2];
         searchObject.minCoursePer[0] = minCoursePer[0] >= searchObject.second.length ? 0 : searchObject.second.length-minCoursePer[0];
         searchObject.minCoursePer[1] = minCoursePer[1] >= searchObject.third.length  ? 0 : searchObject.third.length -minCoursePer[1];
         searchObject.minCoursePer[2] = minCoursePer[2] >= searchObject.fourth.length ? 0 : searchObject.fourth.length-minCoursePer[2];
-        console.log(searchObject);
+
         setSearchObject(searchObject);
         setModalVisible(false);
     }

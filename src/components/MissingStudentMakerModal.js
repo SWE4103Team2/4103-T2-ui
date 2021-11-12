@@ -5,31 +5,31 @@ import Grid from '@mui/material/Grid';
 import { Modal, Box, MenuItem, FormControl, InputLabel, Select } from '@mui/material';
 import { addSingleStudent } from '../api/students';
 
-/**
- * MissingStudentMakerModal
- */
 const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTranscript}) => {
-
     const [modalState, setModalState] = useState(false);
     const [data, setData] = useState({});
     const [program, setProgram] = useState("MULTI");
     const [errors, setErrors] = useState([false,false,false,false,false,false]);
-    const [values, setValues] = useState(['','','','','','']);
+    const [values] = useState(['','','','','','']);
 
     useEffect(() => {
-        if(rowData)
+        if(rowData) {
             setData(rowData);
             values[0] = rowData.Student_ID;
+        }
+        // eslint-disable-next-line
     }, [rowData]);
 
     useEffect(() => {
-        if(programIn && programIn !== "MULTI")
+        if(programIn && programIn !== "MULTI") {
             setProgram("BS" + programIn);
             values[4] = "BS" + programIn;
+        }
+        // eslint-disable-next-line
     }, [programIn]);
 
     const handleSave = () => {
-        if(!values.some((value) => {return value === ""})){
+        if(!values.some((value) => {return value === ""})) {
             const upload = async () => {
                 var stu = {};
                 stu.fileID = rowData.fileID;
@@ -56,17 +56,18 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
     };
     
     const handleClose = () => {
-        if(modalState)
+        if(modalState) {
             setErrors([false,false,false,false,false,false]);
             setModalState(false);
+        }
     };
 
     const handleOpen = () => {
-        if(!modalState)
+        if(!modalState) {
             setModalState(true);
+        }
     };
 
-  // 
   return (
     <div>
         <Modal
@@ -74,13 +75,13 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
             onBackdropClick={handleClose}
         >
             <Box sx={modalStyle}>
-                <Grid container style={{textAlign:'center'}}>
+                <Grid container style={{ textAlign:'center' }}>
                     <Grid item xs>
                         <TextField 
                             label="Student ID" 
                             defaultValue={data.Student_ID}
                             disabled
-                            sx={{margin:1, width: '10rem'}}
+                            sx={{ margin: 1, width: '10rem' }}
                         />
                     </Grid>
                     <Grid item xs>
@@ -88,10 +89,9 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
                             label="Full Name" 
                             defaultValue={""}
                             placeholder={"First Last"}
-                            onChange={(e) => {}}
                             error={errors[1]}
-                            onChange={(e) => handleChange(e.target.value, 1)}
-                            sx={{margin:1, width: '10rem'}}
+                            onChange={e => handleChange(e.target.value, 1)}
+                            sx={{ margin: 1, width: '10rem' }}
                         />
                     </Grid>
                     <Grid item xs>
@@ -99,10 +99,9 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
                             label="Start Date" 
                             defaultValue={""}
                             placeholder={"YYYY-MM-DD"}
-                            onChange={(e) => {}}
                             error={errors[2]}
-                            onChange={(e) => handleChange(e.target.value, 2)}
-                            sx={{margin:1, width: '10rem'}}
+                            onChange={e => handleChange(e.target.value, 2)}
+                            sx={{ margin: 1, width: '10rem' }}
                         />
                     </Grid>
                     <Grid item xs>
@@ -110,10 +109,9 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
                             label="Email Tag" 
                             defaultValue={""}
                             placeholder={"Without @unb.ca"}
-                            onChange={(e) => {}}
                             error={errors[3]}
-                            onChange={(e) => handleChange(e.target.value, 3)}
-                            sx={{margin:1, width: '10rem'}}
+                            onChange={e => handleChange(e.target.value, 3)}
+                            sx={{ margin: 1, width: '10rem' }}
                         />
                     </Grid>
                     <Grid item xs>
@@ -122,10 +120,9 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
                             defaultValue={programIn === "MULTI" ? "" : program}
                             placeholder={"ie. BSSWE"}
                             disabled={programIn !== "MULTI"}
-                            onChange={(e) => {}}
                             error={errors[4]}
-                            onChange={(e) => handleChange(e.target.value, 4)}
-                            sx={{margin:1, width: '10rem'}}
+                            onChange={e => handleChange(e.target.value, 4)}
+                            sx={{ margin: 1, width: '10rem' }}
                         />
                     </Grid>
                     <Grid item xs>
@@ -136,33 +133,29 @@ const MissingStudentMakerModal = ({rowData, programIn, refreshStudents, closeTra
                             <Select
                                 label="Campus"
                                 placeholder={"FR or SJ"}
-                                onChange={(e) => {}}  
-                                
                                 defaultValue={""}
-                                onChange={(e) => handleChange(e.target.value, 5)}
-                                sx={{ width: '10rem'}}
+                                onChange={e => handleChange(e.target.value, 5)}
+                                sx={{ width: '10rem' }}
                             >
-                            <MenuItem value={"FR"}>FR</MenuItem>
-                            <MenuItem value={"SJ"}>SJ</MenuItem>
+                            <MenuItem value={"FR"}> FR </MenuItem>
+                            <MenuItem value={"SJ"}> SJ </MenuItem>
                             </Select>
                         </FormControl> 
                     </Grid>
                 </Grid>  
                 <Grid container>
-                    <Grid item xs={12} style={{textAlign:'center'}}>
-                        <Button variant="contained" component="span" 
-                        sx={{margin:1, width: '10rem'}} onClick={handleClose}> 
+                    <Grid item xs={12} style={{ textAlign:'center' }}>
+                        <Button variant="contained" component="span" sx={{ margin:1, width: '10rem' }} onClick={handleClose}> 
                             Cancel
                         </Button>
-                        <Button variant="contained" component="span" 
-                        sx={{margin:1, width: '10rem'}} onClick={handleSave}> 
+                        <Button variant="contained" component="span" sx={{ margin:1, width: '10rem' }} onClick={handleSave}> 
                             Save
                         </Button>
                     </Grid>
                 </Grid>
             </Box>
         </Modal>
-        <Button onClick={handleOpen} variant="contained" component="span" >Set Student</Button>
+        <Button onClick={handleOpen} variant="contained" component="span"> Set Student </Button>
     </div>
   );
 }
