@@ -6,7 +6,8 @@ import DeleteButton from '../components/DeleteButton';
 import MenuDropDown from '../components/MenuDropDown';
 import InfoPopover from '../components/InfoPopover';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
-import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel,} from '@mui/material';
+import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel, Tab} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab'
 import { XLSXUpload } from '../components/XLSXUpload'; 
 import XLSXSnackbar from '../components/XLSXSnackbar.js';
 
@@ -30,6 +31,8 @@ export const Students = ({user}) => {
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
+  const [tabValue, setTabValue] = useState(1);
+  const [countType, setCountType] = useState('');
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -40,7 +43,7 @@ export const Students = ({user}) => {
     }
   }, [user]);
   // Column names for the  list students table
-  const columns = [
+  const columnsStudent = [
     {field: 'Student_ID', headerName: 'ID',         flex: 0.5,  align: "center", headerAlign: "center"},
     {field: 'ShortName',  headerName: 'Name',       flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
@@ -51,6 +54,15 @@ export const Students = ({user}) => {
     {field: 'Year',       headerName: 'Year',       flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Start_Date', headerName: 'Start Date', flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
+  ]
+
+  const columnsCount = [
+    {field: 'CountType',      headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'CountJuniors',   headerName: 'JUN',    flex: 0.5,  align: "center", headerAlign: "center"},
+    {field: 'CountSophomore', headerName: 'SOP',    flex: 0.5,  align: "center", headerAlign: "center"},
+    {field: 'CountFreshman',  headerName: 'FRE',    flex: 0.5,  align: "center", headerAlign: "center"},
+    {field: 'CountSenior',    headerName: 'SEN',    flex: 0.5,  align: "center", headerAlign: "center"},
+    {field: 'CountTotal',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
   ]
 
   //Starts the loading animation
@@ -219,6 +231,17 @@ export const Students = ({user}) => {
     "By Custom Requirements",
   ]
 
+  const countTypes = [
+    "By Course",
+    "By Course Groups",
+    "By Campus",
+    "By Co-op"
+  ]
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  }
+
   return (
     <Paper sx={{width: '99%'}}>
       <Modal
@@ -299,10 +322,40 @@ export const Students = ({user}) => {
           <MenuDropDown menuButtonsIn={menuButtons}/>
         </Grid>
       </Grid>
-      <Grid container rowSpacing={2}  justifyContent="center" sx={{ pb: '1rem'}} alignItems="center" style={{textAlign:'center'}}>
-        <Grid item xs={12} sm={12} md={12} sx={{ pl: '1rem', pr: '1rem'}}>
-          <Table names={columns} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
-        </Grid>
+      <Grid>
+        <TabContext value={tabValue}>
+          <Box>
+            <TabList onChange={handleTabChange} >
+              <Tab label="Student List" value={1} />
+              <Tab label="Counts List" value={2} />
+                {tabValue === 2 ? 
+                  <FormControl>
+                      <InputLabel>
+                        Type
+                      </InputLabel>
+                      <Select
+                        size="small"
+                        value={countType}
+                        label="Type"
+                        onChange={(e) => {setCountType(e.target.value)}}   
+                        sx={{ width: '15rem' }}
+                      >
+                        {countTypes.map(type => {
+                          return <MenuItem>{type}</MenuItem>
+                        })}
+                      </Select>
+                  </FormControl>
+                  : null}
+            </TabList>
+          </Box>
+          <TabPanel value={1} >
+            <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+          </TabPanel>
+          <TabPanel value={2} >
+            <Table names={columnsCount} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+          </TabPanel>
+        </TabContext>
+        
       </Grid>
     </Paper>
   );
