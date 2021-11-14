@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton, GridToolbarColumnsButton, GridOverlay} from '@mui/x-data-grid';
-import LinearProgress from '@mui/material/LinearProgress';
+import { LinearProgress, Button } from '@mui/material';
 import { isMobile } from 'react-device-detect';
 
 /**
@@ -11,7 +11,7 @@ import { isMobile } from 'react-device-detect';
  *    - doubleClickFunction = a function that dictates what should happen when a row is double clicked
  *    - loadingIn = if the table should display the loading indicator or not
  */
-const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
+const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButtons}) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -27,10 +27,15 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
   //toolbar component
   const customToolbar = () => {
     return (
-      <GridToolbarContainer>
-        <GridToolbarFilterButton />
-        <GridToolbarColumnsButton />
-      </GridToolbarContainer>
+        toolbarButtons === undefined ? 
+          <GridToolbarContainer>
+            <GridToolbarFilterButton />
+            <GridToolbarColumnsButton />
+          </GridToolbarContainer>
+          : 
+          <GridToolbarContainer>
+            {toolbarButtons}
+          </GridToolbarContainer>
     );
   }
   

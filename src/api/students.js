@@ -44,3 +44,18 @@ export const deleteFile = async (file) => {
   const result = await api.get('/students/deleteFile', {params: {file}});
   return result.data;
 };
+
+export const getCampusCounts = async (campus, file) => {
+  const result = await api.get('/students/getCampusCounts', {params: {campus, file}});
+  return result.data;
+};
+
+export const getCourseCounts = async (course, file) => {
+  const result = await api.get('/students/getCourseCounts', {params: {course, file}});
+  return result.data;
+};
+
+export const getRankCounts = async (file) => {
+  const result = await api.get('/students/getRankCounts', {params: {file}});
+  return result.data;
+};

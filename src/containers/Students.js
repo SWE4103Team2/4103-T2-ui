@@ -5,9 +5,8 @@ import CustomSearch from '../components/CustomSearch.js';
 import DeleteButton from '../components/DeleteButton';
 import MenuDropDown from '../components/MenuDropDown';
 import InfoPopover from '../components/InfoPopover';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
-import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel, Tab} from '@mui/material';
-import { TabContext, TabList, TabPanel } from '@mui/lab'
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getRankCounts, getCourseCounts } from '../api/students';
+import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
 import XLSXSnackbar from '../components/XLSXSnackbar.js';
 
@@ -31,12 +30,11 @@ export const Students = ({user}) => {
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
-  const [tabValue, setTabValue] = useState(1);
   const [countType, setCountType] = useState('');
+  const [countsData, setCountsData] = useState([]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
-
   useEffect(() => {
     if(user.userID){
       setUserID(user.userID);
@@ -49,20 +47,16 @@ export const Students = ({user}) => {
     {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center"},
     {field: 'Status',     headerName: 'Status',     flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'FirstName',  headerName: 'First Name', flex: 1,    align: "center", headerAlign: "center", hide:"true"},
-    {field: 'LastName',   headerName: 'Last Name',  flex: 1,    align: "center", headerAlign: "center", hide:"true"},
+    {field: 'FirstName',  headerName: 'First Name', flex: 0.6,    align: "center", headerAlign: "center", hide:"true"},
+    {field: 'LastName',   headerName: 'Last Name',  flex: 0.6,    align: "center", headerAlign: "center", hide:"true"},
     {field: 'Year',       headerName: 'Year',       flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Start_Date', headerName: 'Start Date', flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
   ]
 
   const columnsCount = [
-    {field: 'CountType',      headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'CountJuniors',   headerName: 'JUN',    flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'CountSophomore', headerName: 'SOP',    flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'CountFreshman',  headerName: 'FRE',    flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'CountSenior',    headerName: 'SEN',    flex: 0.5,  align: "center", headerAlign: "center"},
-    {field: 'CountTotal',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'CountType',                     headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'COUNT(Student.Student_ID)',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
   ]
 
   //Starts the loading animation
@@ -217,6 +211,68 @@ export const Students = ({user}) => {
     }
   }
 
+  const callCountAPI = async (type) => {
+    console.log(countType);
+    switch(type){
+      case 'all':
+        getCampusCounts("FR", file).then(result => {
+          for(let i = 0; i < result.length; i++) {
+            result[i].id = i + 1;
+          }
+          setCountsData(result);
+          setCountsData(curr => [...curr, {id: 0}])
+
+          getRankCounts(file).then(result => {
+            for(let i = 0; i < result.length; i++) {
+              result[i].id = i + 1;
+            }
+            console.log(result);
+            setCountsData(curr => [...curr, result]);
+            setCountsData(curr => [...curr, {id: 0}])
+            });
+          console.log(countsData)
+        });
+        break;
+      case 'courses':
+        getCourseCounts(file).then(result => {
+          for(let i = 0; i < result.length; i++) {
+            result[i].id = i + 1;
+          }
+          console.log(result);
+          setCountsData(result);
+        });
+          break;
+      default:
+          setCountsData([{ id: 1, CountType: "Unknown" }]);
+    }
+  }
+
+  const countTypeNames = [
+    "FR",
+    "SJ",
+    "",
+    "FRE",
+    "SOP",
+    "JUN",
+    "SEN",
+    "", 
+    "CO-OP",
+  ]
+
+  useEffect(() => {
+    switch(countType) {
+      case 'all':
+        for(let i = 0; i < countsData.length; i++) {
+          countsData[i].CountType = countTypeNames[i];
+        }
+        break;
+      case 'bruh':
+        countsData[0].CountType = 'Co-op';
+        break;
+      default:
+    }
+  }, [countsData]);
+
   const menuButtons = [
     <MenuItem><InfoPopover info={"Used to create a custom set of criteria to decide what rank each student should be."} /> <Button fullWidth="true" variant="contained" onClick={e => {setCustomSearchState(true)}}>Custom Rank</Button></MenuItem>,
     <MenuItem><InfoPopover info={"Used to load the core courses. This function only accepts XLSX files in the format shown on this site. These courses can be used to calculate rank and in the transcripts."} /> <XLSXUpload setCourseArray={callUploadCoreCoursesArr} /></MenuItem>,
@@ -231,16 +287,10 @@ export const Students = ({user}) => {
     "By Custom Requirements",
   ]
 
-  const countTypes = [
-    "By Course",
-    "By Course Groups",
-    "By Campus",
-    "By Co-op"
-  ]
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  }
+  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountType(e.target.value); callCountAPI(e.target.value)}}>
+    <ToggleButton value="all">All Counts (Excluding Courses)</ToggleButton>
+    <ToggleButton value="courses">Courses</ToggleButton> 
+  </ToggleButtonGroup>
 
   return (
     <Paper sx={{width: '99%'}}>
@@ -322,40 +372,13 @@ export const Students = ({user}) => {
           <MenuDropDown menuButtonsIn={menuButtons}/>
         </Grid>
       </Grid>
-      <Grid>
-        <TabContext value={tabValue}>
-          <Box>
-            <TabList onChange={handleTabChange} >
-              <Tab label="Student List" value={1} />
-              <Tab label="Counts List" value={2} />
-                {tabValue === 2 ? 
-                  <FormControl>
-                      <InputLabel>
-                        Type
-                      </InputLabel>
-                      <Select
-                        size="small"
-                        value={countType}
-                        label="Type"
-                        onChange={(e) => {setCountType(e.target.value)}}   
-                        sx={{ width: '15rem' }}
-                      >
-                        {countTypes.map(type => {
-                          return <MenuItem>{type}</MenuItem>
-                        })}
-                      </Select>
-                  </FormControl>
-                  : null}
-            </TabList>
-          </Box>
-          <TabPanel value={1} >
-            <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
-          </TabPanel>
-          <TabPanel value={2} >
-            <Table names={columnsCount} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
-          </TabPanel>
-        </TabContext>
-        
+      <Grid container >
+        <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem'}}>
+          <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+        </Grid>
+        <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
+          <Table names={columnsCount} studentRows={countsData  } doubleClickFunction={onRowDoubleClick} loadingIn={loading} toolbarButtons={toolbarComponents}/>
+        </Grid>
       </Grid>
     </Paper>
   );
