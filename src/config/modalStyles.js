@@ -3,6 +3,7 @@ export const largeModal = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
+  height: '80%',
   width: '80%',
   bgcolor: 'background.paper',
   boxShadow: 24,

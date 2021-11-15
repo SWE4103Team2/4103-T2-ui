@@ -188,14 +188,14 @@ export const Students = ({user}) => {
     <>
       {/** Transcript Modal **/}
       <Modal open={transcriptState} onBackdropClick={() => setTranscriptState(false)}>
-        <Box sx={largeModal}>
-          <TranscriptModal rowData={modalRow} userID={userID} programIn={programType}/>
+        <Box sx={{ ...largeModal }}>
+          <TranscriptModal closeModal={() => setTranscriptState(false)} rowData={modalRow} userID={userID} programIn={programType}/>
         </Box>
       </Modal>
           
       {/** Custom Rank Modal **/}
       <Modal open={customSearchState} onBackdropClick={() => setCustomSearchState(false)}>
-        <Box sx={largeModal}>
+        <Box sx={{ ...largeModal }}>
           <CustomSearch courses={courses} setSearchObject={setCustomSearchVal} searchObjectIn={customSearchVal} setModalVisible={setCustomSearchState}/>
         </Box>
       </Modal>
