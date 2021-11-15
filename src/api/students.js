@@ -45,17 +45,22 @@ export const deleteFile = async (file) => {
   return result.data;
 };
 
-export const getCampusCounts = async (campus, file) => {
-  const result = await api.get('/students/getCampusCounts', {params: {campus, file}});
+export const getCampusCounts = async (file) => {
+  const result = await api.get('/students/getCampusCounts', {params: {file}});
   return result.data;
 };
 
-export const getCourseCounts = async (course, file) => {
-  const result = await api.get('/students/getCourseCounts', {params: {course, file}});
+export const getCourseCounts = async (file) => {
+  const result = await api.get('/students/getCourseCounts', {params: {file}});
   return result.data;
 };
 
 export const getRankCounts = async (file) => {
   const result = await api.get('/students/getRankCounts', {params: {file}});
+  return result.data;
+};
+
+export const getCoopCounts = async (file) => {
+  const result = await api.get('/students/getCoopCounts', {params: {file}});
   return result.data;
 };

@@ -5,10 +5,12 @@ import CustomSearch from '../components/CustomSearch.js';
 import DeleteButton from '../components/DeleteButton';
 import MenuDropDown from '../components/MenuDropDown';
 import InfoPopover from '../components/InfoPopover';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getRankCounts, getCourseCounts } from '../api/students';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getRankCounts, getCourseCounts, getCoopCounts } from '../api/students';
 import { Paper, Grid, Button, Select, MenuItem, Modal, Box, FormControl, InputLabel, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { XLSXUpload } from '../components/XLSXUpload'; 
 import XLSXSnackbar from '../components/XLSXSnackbar.js';
+import { GridToolbarFilterButton } from '@mui/x-data-grid';
+
 
 
 /**
@@ -32,6 +34,7 @@ export const Students = ({user}) => {
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
   const [countType, setCountType] = useState('');
   const [countsData, setCountsData] = useState([]);
+  const [sortTable, setSortTable] = useState(true);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -55,8 +58,8 @@ export const Students = ({user}) => {
   ]
 
   const columnsCount = [
-    {field: 'CountType',                     headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'COUNT(Student.Student_ID)',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'countName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'Count',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
   ]
 
   //Starts the loading animation
@@ -212,25 +215,36 @@ export const Students = ({user}) => {
   }
 
   const callCountAPI = async (type) => {
-    console.log(countType);
+    let temp = [];
+    let idNumber = 0;
     switch(type){
       case 'all':
-        getCampusCounts("FR", file).then(result => {
-          for(let i = 0; i < result.length; i++) {
-            result[i].id = i + 1;
+        getCampusCounts(file).then(result => {
+          for(; idNumber < result.length; idNumber++) {
+            result[idNumber].id = idNumber + 1;
+            temp[temp.length] = result[idNumber];
           }
-          setCountsData(result);
-          setCountsData(curr => [...curr, {id: 0}])
+          idNumber++;
+          temp[temp.length] = { id: idNumber, countName: "" };
+          idNumber++;
 
           getRankCounts(file).then(result => {
-            for(let i = 0; i < result.length; i++) {
-              result[i].id = i + 1;
+            for(let i = 0; i < result.length; idNumber++, i++) {
+              result[i].id = idNumber + 1;
+              temp[temp.length] = result[i];
+
             }
-            console.log(result);
-            setCountsData(curr => [...curr, result]);
-            setCountsData(curr => [...curr, {id: 0}])
+            idNumber++;
+            temp[temp.length] = { id: idNumber, countName: "" };
+            idNumber++;
+            getCoopCounts(file).then(result => {
+              for(let i = 0; i < result.length; idNumber++, i++) {
+                result[i].id = idNumber + 1;
+                temp[temp.length] = result[i];
+              }
+              setCountsData(temp);
             });
-          console.log(countsData)
+            });
         });
         break;
       case 'courses':
@@ -238,36 +252,27 @@ export const Students = ({user}) => {
           for(let i = 0; i < result.length; i++) {
             result[i].id = i + 1;
           }
-          console.log(result);
           setCountsData(result);
         });
           break;
       default:
-          setCountsData([{ id: 1, CountType: "Unknown" }]);
+          setCountsData([{ id: 1, countName: "Unknown" }]);
     }
   }
-
-  const countTypeNames = [
-    "FR",
-    "SJ",
-    "",
-    "FRE",
-    "SOP",
-    "JUN",
-    "SEN",
-    "", 
-    "CO-OP",
-  ]
 
   useEffect(() => {
     switch(countType) {
       case 'all':
         for(let i = 0; i < countsData.length; i++) {
-          countsData[i].CountType = countTypeNames[i];
+          if(countsData[i] === undefined){
+            countsData[i].countName = "";
+          }
         }
         break;
-      case 'bruh':
-        countsData[0].CountType = 'Co-op';
+      case 'courses':
+        for(let i = 0; i < countsData.length; i++) {
+          countsData[i].countName = countsData[i].Course;
+        }
         break;
       default:
     }
@@ -287,10 +292,11 @@ export const Students = ({user}) => {
     "By Custom Requirements",
   ]
 
-  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountType(e.target.value); callCountAPI(e.target.value)}}>
-    <ToggleButton value="all">All Counts (Excluding Courses)</ToggleButton>
-    <ToggleButton value="courses">Courses</ToggleButton> 
-  </ToggleButtonGroup>
+  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
+                              <ToggleButton value="all" size="small" onClick={() => setSortTable(false)}>Misc Counts</ToggleButton>
+                              <ToggleButton value="courses" size="small" onClick={() => setSortTable(true)}>Course Counts</ToggleButton> 
+                              {sortTable ? <GridToolbarFilterButton /> : undefined}
+                            </ToggleButtonGroup>
 
   return (
     <Paper sx={{width: '99%'}}>
@@ -373,11 +379,13 @@ export const Students = ({user}) => {
         </Grid>
       </Grid>
       <Grid container >
-        <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem'}}>
-          <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading}/>
+        <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem', pb: '1rem' }}>
+          <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading} enableSorting={true} />
         </Grid>
         <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
-          <Table names={columnsCount} studentRows={countsData  } doubleClickFunction={onRowDoubleClick} loadingIn={loading} toolbarButtons={toolbarComponents}/>
+          {console.log(sortTable)}
+          {sortTable ? <Table names={columnsCount} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} enableSorting={true} />
+          : <Table names={columnsCount} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} enableSorting={false} />}
         </Grid>
       </Grid>
     </Paper>

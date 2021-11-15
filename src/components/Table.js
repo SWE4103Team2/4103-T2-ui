@@ -11,7 +11,7 @@ import { isMobile } from 'react-device-detect';
  *    - doubleClickFunction = a function that dictates what should happen when a row is double clicked
  *    - loadingIn = if the table should display the loading indicator or not
  */
-const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButtons}) => {
+const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButtons, enableSorting}) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +60,11 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButto
          disableColumnMenu={true}
          hideFooter={false}
          autoPageSize
-         onRowClick={e => {doubleClickFunction(e.row)}}
+         columns={names.map((column) => ({
+          ...column,
+          sortable: enableSorting,
+          }))}
+         onRowClick={doubleClickFunction !== undefined ? e => doubleClickFunction(e.row) : () => {}}
          rowHeight={30}
          loading={loading}
          components={{
@@ -75,7 +79,11 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButto
          disableColumnMenu={true}
          hideFooter={false}
          autoPageSize
-         onRowDoubleClick={e => {doubleClickFunction(e.row)}}
+         columns={names.map((column) => ({
+          ...column,
+          sortable: enableSorting,
+          }))}
+         onRowDoubleClick={doubleClickFunction !== undefined ? e => doubleClickFunction(e.row) : () => {}}
          rowHeight={20}
          loading={loading}
          components={{
