@@ -53,6 +53,7 @@ export const Login = ({ setUser }) => {
           size="small"
           type="text"
           label="Username"
+          id="username"
           value={username}
           onKeyPress={e => e.key === "Enter" && handleLogin()}
           onChange={e => setUsername(e.target.value)}
@@ -62,6 +63,7 @@ export const Login = ({ setUser }) => {
           size="small"
           type="password"
           label="Password"
+          id="password"
           value={password}
           onKeyPress={e => e.key === "Enter" && handleLogin()}
           onChange={e => setPassword(e.target.value)}
@@ -70,7 +72,8 @@ export const Login = ({ setUser }) => {
 
         {/** Submit Button **/}
         <Button 
-          variant="contained" 
+          variant="contained"
+          id="submit" 
           onClick={() => handleLogin()}
         > 
           Log In
@@ -81,6 +84,7 @@ export const Login = ({ setUser }) => {
           <Alert
             severity={'error'}
             color={'error'}
+            id="error-popup"
           >
             Error Logging In. 
             <br />

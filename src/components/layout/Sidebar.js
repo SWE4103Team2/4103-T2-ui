@@ -12,7 +12,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 const Item = ({ open, title, icon, route }) => {
   return (
     <>
-      <ListItem button component={Link} to={route} sx={{ pl: "25px" }}>
+      <ListItem button component={Link} id={title} to={route} sx={{ pl: "25px" }}>
         {open ? (
           <ListItemIcon>
             {icon}
@@ -44,7 +44,10 @@ const Sidebar = () => {
   return (
     <Box sx={{ display: 'flex'}}>
       <Drawer variant="permanent" open={open}>
-        <Button onClick={toggleDrawer} sx={{ w:"100%", height:"4rem" }}>
+        <Button 
+          onClick={toggleDrawer} 
+          sx={{ w:"100%", height:"4rem" }}
+          id="side-drawer">
           {open ? <LeftIcon /> : <MenuIcon />}
         </Button>
         <Divider />

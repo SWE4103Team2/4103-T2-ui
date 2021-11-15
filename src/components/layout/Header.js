@@ -13,7 +13,9 @@ const Header = ({ setUser, login }) => {
     <AppBar position='static' sx={{ height: "4rem", mb: "2rem" }}>
       <Toolbar>
       <MenuItem sx={{ flexGrow: 1 }} component={!login ? Link : null} to={ROUTE_HOME}>
-          <Typography variant='h5'>
+          <Typography 
+            variant='h5'
+            id="home">
             SWE4103 Team 2
           </Typography>
         </MenuItem>
@@ -21,6 +23,7 @@ const Header = ({ setUser, login }) => {
         <MenuItem >
           <Button 
             variant="contained" 
+            id="logout"
             onClick={handleSetUser}> 
               Log Out
           </Button>

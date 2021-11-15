@@ -23,18 +23,20 @@ export const FileUpload = () => {
                 <Grid item sx={{ paddingTop: 5 }}>
                     <TextField
                         size="small"
-                        label="DateSet Name"
+                        label="Dataset Name"
+                        id="dataset-name"
                         onChange={e => setDataSetName(e.target.value)}
                         sx={{ mr: '0.5rem', mt: 2 }} />
                     <Select
                         size="small"
                         value={programName}
                         label="Program"
+                        id="dropdown-program"
                         onChange={e => setProgramName(e.target.value)}
                         sx={{ mr: '0.5rem', mt: 2, width: '6rem' }}
                     >
                         {programs.map((programTitle) => {
-                            return <MenuItem value={programTitle}> {programTitle} </MenuItem>
+                            return <MenuItem id={programTitle} value={programTitle}> {programTitle} </MenuItem>
                         })}
                     </Select>
                 </Grid>
@@ -50,6 +52,7 @@ export const FileUpload = () => {
                         variant="contained"
                         size="medium"
                         component="span"
+                        id="submit-set"
                         disabled={dataSetName && programName ? false : true}
                         onClick={() => setUploaded(true)}
                         sx={{ height: '100%' }}
