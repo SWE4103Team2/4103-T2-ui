@@ -10,7 +10,6 @@ import { Box, Button, Modal, Grid, Typography} from '@mui/material';
  * 		updateState - boolean, not required, used the the updated state is different from the previous state
  */
 const DeleteButton = ({ apiFunction, fileIDIn, setUpdate, updateState}) => {
-
 	const [modalState, setModalState] = useState(false);
 
 	/**
@@ -23,15 +22,15 @@ const DeleteButton = ({ apiFunction, fileIDIn, setUpdate, updateState}) => {
 		}
 	}, [modalState]);
 
-	/**
-	 * Function to call the API to delete the files, then closes the modal and updates the state of the page
-	 */
+	// Calls API Function
 	const deleteFiles = async () => {
-		const deleteF = async () => {
+		const deleteFunction = async () => {
 			await apiFunction(fileIDIn);
-		}
-		deleteF();
+		};
+		
+		deleteFunction();
 		setModalState(false);
+
 		if(setUpdate){
 			setUpdate(!updateState);
 		}
@@ -39,43 +38,45 @@ const DeleteButton = ({ apiFunction, fileIDIn, setUpdate, updateState}) => {
 
   return (
     <Box display='flex' width="100%" >
-      	<Modal
-        open={modalState}
-        onBackdropClick={e => setModalState(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      	>
-			<Box sx={style}>
-				<Grid container flex style={{height:'20vh'}}>
-					<Grid container>
-						<Grid item xs={12} style={{textAlign:'center'}}>
-							<Typography variant={"h5"}>Are you sure you want to delete all files associated with the file ID "{fileIDIn}"</Typography>
+			<Modal
+				open={modalState}
+				onBackdropClick={() => setModalState(false)}
+				aria-labelledby="modal-modal-title"
+				aria-describedby="modal-modal-description"
+			>
+				<Box sx={style}>
+					<Grid container flex style={{ height: '20vh' }}>
+						<Grid container>
+							<Grid item xs={12} style={{ textAlign: 'center' }}>
+								<Typography variant={"h5"}>
+									Are you sure you want to delete all files associated with the file ID "{fileIDIn}"
+								</Typography>
+							</Grid>
+						</Grid>
+						<Grid container>
+							<Grid item xs={6} style={{ textAlign: 'center' }}>
+								<Button variant="contained" component="span" sx={{ marginLeft: 3 }} onClick={() => {setModalState(false)}}> 
+									Decline
+								</Button>
+							</Grid>
+							<Grid item xs={6} style={{ textAlign:'center' }}>
+								<Button variant="contained" component="span" sx={{ marginLeft: 3 }} onClick={() => {deleteFiles(fileIDIn)}}> 
+									Confirm
+								</Button>
+							</Grid>
 						</Grid>
 					</Grid>
-					<Grid container>
-						<Grid item xs={6} style={{textAlign:'center'}}>
-							<Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {setModalState(false)}}> 
-								Decline
-							</Button>
-						</Grid>
-						<Grid item xs={6} style={{textAlign:'center'}}>
-							<Button variant="contained" component="span" sx={{marginLeft:3}} onClick={e => {deleteFiles(fileIDIn)}}> 
-								Confirm
-							</Button>
-						</Grid>
-					</Grid>
-				</Grid>
-			</Box>
-		</Modal>
-            <Button 
+				</Box>
+			</Modal>
+    	<Button 
 				variant="contained" 
 				component="span" 
 				fullWidth="true" 
-				onClick={e => {setModalState(true)}}
+				onClick={() => setModalState(true)}
 			> 
-                Delete Files
-            </Button>
-    </Box>
+      	Delete Files
+    	</Button>
+  	</Box>
   );
 };
 
@@ -92,4 +93,4 @@ const style = {
 	border: '2px solid #000',
 	boxShadow: 24,
 	p: 4,
-  };
+};

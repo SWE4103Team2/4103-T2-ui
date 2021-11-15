@@ -1,6 +1,4 @@
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
+import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
@@ -28,15 +26,9 @@ const XLSXSnackbar = ({info}) => {
 
   return (
     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        {error ?
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={handleClose} severity={error ? "error" : "success"} sx={{ width: '100%' }}>
             {string}
         </Alert>
-        :
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-            {string}
-        </Alert>
-        }
     </Snackbar>
     );
 }
