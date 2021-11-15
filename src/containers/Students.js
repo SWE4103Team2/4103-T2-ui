@@ -32,7 +32,7 @@ export const Students = ({user}) => {
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
-  const [countType, setCountType] = useState('');
+  const [countType, setCountType] = useState('all');
   const [countsData, setCountsData] = useState([]);
   const [sortTable, setSortTable] = useState(true);
 
@@ -50,16 +50,21 @@ export const Students = ({user}) => {
     {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center"},
     {field: 'Status',     headerName: 'Status',     flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'FirstName',  headerName: 'First Name', flex: 0.6,    align: "center", headerAlign: "center", hide:"true"},
-    {field: 'LastName',   headerName: 'Last Name',  flex: 0.6,    align: "center", headerAlign: "center", hide:"true"},
+    {field: 'FirstName',  headerName: 'First Name', flex: 0.6,  align: "center", headerAlign: "center", hide:"true"},
+    {field: 'LastName',   headerName: 'Last Name',  flex: 0.6,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Year',       headerName: 'Year',       flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Start_Date', headerName: 'Start Date', flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
     {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
   ]
 
-  const columnsCount = [
+  const columnsCountSortable = [
     {field: 'countName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Count',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
+  ]
+  
+  const columnsCountNotSortable = [
+    {field: 'countNameNotSortable', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center", sortable: false},
+    {field: 'CountNotSortable',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center", sortable: false},
   ]
 
   //Starts the loading animation
@@ -69,8 +74,9 @@ export const Students = ({user}) => {
   //The year has multiple ways of calculating it, this is specified with the drop down (or with 0,1,2,3,4 see API for details)
   const callGetStudents = async () => {
     setLoading(true);
+    callCountAPI(countType);
     getStudents(searchValue, file).then(result => {
-      getYear(file, searchValue, yearType, userID, customSearchVal).then(year => {
+      getYear(file, searchValue, yearType, userID, customSearchVal, false).then(year => {
         for (let i = 0; i < year.length; i++) {
           result[i].Year = year[i].Year === null ? 0 : year[i].Year;
         }
@@ -220,16 +226,26 @@ export const Students = ({user}) => {
     switch(type){
       case 'all':
         getCampusCounts(file).then(result => {
-          for(; idNumber < result.length; idNumber++) {
+          for(let i = 0; idNumber < result.length; idNumber++, i++) {
+            result[i].countNameNotSortable = result[i].countName;
+            delete result[i].countName;
+            result[i].CountNotSortable = result[i].Count;
+            delete result[i].Count;
             result[idNumber].id = idNumber + 1;
             temp[temp.length] = result[idNumber];
           }
+          console.log(temp)
           idNumber++;
           temp[temp.length] = { id: idNumber, countName: "" };
           idNumber++;
 
-          getRankCounts(file).then(result => {
+          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(result => {
             for(let i = 0; i < result.length; idNumber++, i++) {
+              console.log(result);
+              result[i].countNameNotSortable = result[i].countName;
+              delete result[i].countName;
+              result[i].CountNotSortable = result[i].Count;
+              delete result[i].Count;
               result[i].id = idNumber + 1;
               temp[temp.length] = result[i];
 
@@ -239,6 +255,10 @@ export const Students = ({user}) => {
             idNumber++;
             getCoopCounts(file).then(result => {
               for(let i = 0; i < result.length; idNumber++, i++) {
+                result[i].countNameNotSortable = result[i].countName;
+                delete result[i].countName;
+                result[i].CountNotSortable = result[i].Count;
+                delete result[i].Count;
                 result[i].id = idNumber + 1;
                 temp[temp.length] = result[i];
               }
@@ -383,9 +403,7 @@ export const Students = ({user}) => {
           <Table names={columnsStudent} studentRows={students} doubleClickFunction={onRowDoubleClick} loadingIn={loading} enableSorting={true} />
         </Grid>
         <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
-          {console.log(sortTable)}
-          {sortTable ? <Table names={columnsCount} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} enableSorting={true} />
-          : <Table names={columnsCount} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} enableSorting={false} />}
+          <Table names={countType === "courses" ? columnsCountSortable : columnsCountNotSortable} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} />
         </Grid>
       </Grid>
     </Paper>

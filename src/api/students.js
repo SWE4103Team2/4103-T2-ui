@@ -5,8 +5,8 @@ export const getStudents = async (studentID, file) => {
   return result.data;
 };
 
-export const getYear = async (file, studentID, type, userID, searchObject) => {
-  const result = await api.get('/students/getYear', {params: {file, studentID, type, userID, searchObject}});
+export const getYear = async (file, studentID, type, userID, searchObject, count) => {
+  const result = await api.get('/students/getYear', {params: {file, studentID, type, userID, searchObject, count}});
   return result.data;
 };
 
