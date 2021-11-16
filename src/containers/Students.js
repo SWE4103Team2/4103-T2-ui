@@ -34,7 +34,7 @@ export const Students = ({user}) => {
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
   const [countType, setCountType] = useState('all');
   const [countsData, setCountsData] = useState([]);
-  const [sortTable, setSortTable] = useState(true);
+  const [sortTable, setSortTable] = useState(false);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -58,12 +58,12 @@ export const Students = ({user}) => {
   ]
 
   const columnsCountSortable = [
-    {field: 'countName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'CountName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
     {field: 'Count',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
   ]
   
   const columnsCountNotSortable = [
-    {field: 'countNameNotSortable', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center", sortable: false},
+    {field: 'CountNameNotSortable', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center", sortable: false},
     {field: 'CountNotSortable',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center", sortable: false},
   ]
 
@@ -182,22 +182,6 @@ export const Students = ({user}) => {
     }
   }, [file, yearType, customSearchVal]);
 
-  // Search useEffect on list, searches onChange with a sec delay after typing ends
-  // useEffect(()=> {
-  //   if(file !== ""){
-  //     const delayDebounceFn = setTimeout(async () => {
-  //       await callGetStudents();
-  //       // getStudents(searchValue, file).then(result => {
-  //       //   console.log(result);
-  //       //   setStudents(result);
-  //       // });
-  //     }, 1000)
-      
-  //     return () => clearTimeout(delayDebounceFn)
-  //   }
-    
-
-  // }, [searchValue]);
 
   const callUploadCoreCoursesArr = (arr) => {
     if(arr === undefined){
@@ -221,82 +205,65 @@ export const Students = ({user}) => {
   }
 
   const callCountAPI = async (type) => {
-    let temp = [];
-    let idNumber = 0;
+    let finalAPIResults = [];
+    let currentIdNumber = 0;
     switch(type){
-      case 'all':
-        getCampusCounts(file).then(result => {
-          for(let i = 0; idNumber < result.length; idNumber++, i++) {
-            result[i].countNameNotSortable = result[i].countName;
-            delete result[i].countName;
-            result[i].CountNotSortable = result[i].Count;
-            delete result[i].Count;
-            result[idNumber].id = idNumber + 1;
-            temp[temp.length] = result[idNumber];
+      case 'misc':  //when misc counts toggle is activated
+        getCampusCounts(file).then(campusResult => {  //handles campus counts results from API
+          for(let i = 0; currentIdNumber < campusResult.length; currentIdNumber++, i++) {
+            campusResult[i].CountNameNotSortable = campusResult[i].countName;
+            campusResult[i].CountNotSortable = campusResult[i].Count;
+            campusResult[currentIdNumber].id = currentIdNumber + 1;
+            finalAPIResults[finalAPIResults.length] = campusResult[currentIdNumber];
+
+            delete campusResult[i].countName;
+            delete campusResult[i].Count;
           }
-          console.log(temp)
-          idNumber++;
-          temp[temp.length] = { id: idNumber, countName: "" };
-          idNumber++;
+          currentIdNumber++;
+          finalAPIResults[finalAPIResults.length] = { id: currentIdNumber, countName: "" };
+          currentIdNumber++;
 
-          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(result => {
-            for(let i = 0; i < result.length; idNumber++, i++) {
-              console.log(result);
-              result[i].countNameNotSortable = result[i].countName;
-              delete result[i].countName;
-              result[i].CountNotSortable = result[i].Count;
-              delete result[i].Count;
-              result[i].id = idNumber + 1;
-              temp[temp.length] = result[i];
+          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(rankResult => {  //handles rank counts results from API
+            for(let i = 0; i < rankResult.length; currentIdNumber++, i++) {
+              rankResult[i].CountNameNotSortable = rankResult[i].countName;
+              rankResult[i].CountNotSortable = rankResult[i].Count;
+              rankResult[i].id = currentIdNumber + 1;
+              finalAPIResults[finalAPIResults.length] = rankResult[i];
 
+              delete rankResult[i].countName;
+              delete rankResult[i].Count;
             }
-            idNumber++;
-            temp[temp.length] = { id: idNumber, countName: "" };
-            idNumber++;
-            getCoopCounts(file).then(result => {
-              for(let i = 0; i < result.length; idNumber++, i++) {
-                result[i].countNameNotSortable = result[i].countName;
-                delete result[i].countName;
-                result[i].CountNotSortable = result[i].Count;
-                delete result[i].Count;
-                result[i].id = idNumber + 1;
-                temp[temp.length] = result[i];
+            currentIdNumber++;
+            finalAPIResults[finalAPIResults.length] = { id: currentIdNumber, CountName: "" };
+            currentIdNumber++;
+            getCoopCounts(file).then(coopResult => {  //handles coop counts results from API
+              for(let i = 0; i < coopResult.length; currentIdNumber++, i++) {
+                coopResult[i].CountNameNotSortable = coopResult[i].countName;
+                coopResult[i].CountNotSortable = coopResult[i].Count;
+                coopResult[i].id = currentIdNumber + 1;
+                finalAPIResults[finalAPIResults.length] = coopResult[i];
+
+                delete coopResult[i].countName;
+                delete coopResult[i].Count;
               }
-              setCountsData(temp);
+              setCountsData(finalAPIResults);
             });
             });
         });
         break;
-      case 'courses':
-        getCourseCounts(file).then(result => {
-          for(let i = 0; i < result.length; i++) {
-            result[i].id = i + 1;
+      case 'courses': //when course counts toggle is activated
+        getCourseCounts(file).then(courseResult => {  //handles course counts results from API
+          for(let i = 0; i < courseResult.length; i++) {
+            courseResult[i].id = i + 1;
+            courseResult[i].CountName = courseResult[i].Course;
           }
-          setCountsData(result);
+          setCountsData(courseResult);
         });
           break;
       default:
-          setCountsData([{ id: 1, countName: "Unknown" }]);
+          setCountsData([{ id: 1, CountName: "Unknown" }]);
     }
   }
-
-  useEffect(() => {
-    switch(countType) {
-      case 'all':
-        for(let i = 0; i < countsData.length; i++) {
-          if(countsData[i] === undefined){
-            countsData[i].countName = "";
-          }
-        }
-        break;
-      case 'courses':
-        for(let i = 0; i < countsData.length; i++) {
-          countsData[i].countName = countsData[i].Course;
-        }
-        break;
-      default:
-    }
-  }, [countsData]);
 
   const menuButtons = [
     <MenuItem><InfoPopover info={"Used to create a custom set of criteria to decide what rank each student should be."} /> <Button fullWidth="true" variant="contained" onClick={e => {setCustomSearchState(true)}}>Custom Rank</Button></MenuItem>,
@@ -311,9 +278,9 @@ export const Students = ({user}) => {
     "By Core Course",
     "By Custom Requirements",
   ]
-
+  //custom toolbar components for counts table
   const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-                              <ToggleButton value="all" size="small" onClick={() => setSortTable(false)}>Misc Counts</ToggleButton>
+                              <ToggleButton value="misc" size="small" onClick={() => setSortTable(false)}>Misc Counts</ToggleButton>
                               <ToggleButton value="courses" size="small" onClick={() => setSortTable(true)}>Course Counts</ToggleButton> 
                               {sortTable ? <GridToolbarFilterButton /> : undefined}
                             </ToggleButtonGroup>
