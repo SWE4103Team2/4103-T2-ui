@@ -32,9 +32,8 @@ export const Students = ({user}) => {
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
-  const [countType, setCountType] = useState('all');
+  const [countType, setCountType] = useState('misc');
   const [countsData, setCountsData] = useState([]);
-  const [sortTable, setSortTable] = useState(false);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -280,9 +279,9 @@ export const Students = ({user}) => {
   ]
   //custom toolbar components for counts table
   const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-                              <ToggleButton value="misc" size="small" onClick={() => setSortTable(false)}>Misc Counts</ToggleButton>
-                              <ToggleButton value="courses" size="small" onClick={() => setSortTable(true)}>Course Counts</ToggleButton> 
-                              {sortTable ? <GridToolbarFilterButton /> : undefined}
+                              <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
+                              <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
+                              {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
                             </ToggleButtonGroup>
 
   return (
