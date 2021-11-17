@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, TranscriptModal, XLSXSnackbar, XLSXUpload } from '../components';
 import { largeModal } from '../config/modalStyles.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getRankCounts, getCourseCounts, getCoopCounts } from '../api/students';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
 import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { studentColumns } from '../config/tablesColumns.js';
+import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
 import { GridToolbarFilterButton } from '@mui/x-data-grid';
 
 export const Students = ({user}) => {
@@ -32,16 +32,6 @@ export const Students = ({user}) => {
       setUserID(user.userID);
     }
   }, [user]);
-
-  const columnsCountSortable = [
-    {field: 'CountName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
-    {field: 'Count',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
-  ]
-  
-  const columnsCountNotSortable = [
-    {field: 'CountNameNotSortable', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center", sortable: false},
-    {field: 'CountNotSortable',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center", sortable: false},
-  ]
 
   // Gets File Select Values (Updates on Delete / Program Change)
   useEffect(() => {
@@ -351,13 +341,15 @@ export const Students = ({user}) => {
             <MenuDropDown menuButtonsIn={menuButtons}/>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem', pb: '1rem' }}>
-          <Table names={studentColumns} studentRows={students} doubleClickFunction={openTranscript} loadingIn={loading} enableSorting={true} />
-        </Grid>
-        <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
-          <Table names={countType === "courses" ? columnsCountSortable : columnsCountNotSortable} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} />
+
+        {/** Tables **/}
+        <Grid container>
+          <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem', pb: '1rem' }}>
+            <Table names={studentColumns} studentRows={students} doubleClickFunction={openTranscript} loadingIn={loading} enableSorting={true} />
+          </Grid>
+          <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
+            <Table names={countType === "courses" ? columnsCountSortable : columnsCountNotSortable} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} />
+          </Grid>
         </Grid>
       </Paper>
     </>
