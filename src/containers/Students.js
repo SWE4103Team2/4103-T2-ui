@@ -162,46 +162,44 @@ export const Students = ({user}) => {
 
   const callCountAPI = async (type) => {
     let finalAPIResults = [];
-    let currentIdNumber = 0;
     switch(type){
       case 'misc':  //when misc counts toggle is activated
         getCampusCounts(file).then(campusResult => {  //handles campus counts results from API
-          for(let i = 0; currentIdNumber < campusResult.length; currentIdNumber++, i++) {
-            campusResult[i].CountNameNotSortable = campusResult[i].countName;
-            campusResult[i].CountNotSortable = campusResult[i].Count;
-            campusResult[currentIdNumber].id = currentIdNumber + 1;
-            finalAPIResults[finalAPIResults.length] = campusResult[currentIdNumber];
+          campusResult.forEach(campus => {
+            campus.CountNameNotSortable = campus.countName;
+            campus.CountNotSortable = campus.Count;
+            delete campus.countName;
+            delete campus.Count;
 
-            delete campusResult[i].countName;
-            delete campusResult[i].Count;
-          }
-          currentIdNumber++;
-          finalAPIResults[finalAPIResults.length] = { id: currentIdNumber, countName: "" };
-          currentIdNumber++;
+            finalAPIResults.push(campus);
+          });
 
+          finalAPIResults.push({ countName: "" });
           getYear(file, searchValue, yearType, userID, customSearchVal, true).then(rankResult => {  //handles rank counts results from API
-            for(let i = 0; i < rankResult.length; currentIdNumber++, i++) {
-              rankResult[i].CountNameNotSortable = rankResult[i].countName;
-              rankResult[i].CountNotSortable = rankResult[i].Count;
-              rankResult[i].id = currentIdNumber + 1;
-              finalAPIResults[finalAPIResults.length] = rankResult[i];
+            rankResult.forEach(rank => {
+              rank.CountNameNotSortable = rank.countName;
+              rank.CountNotSortable = rank.Count;
+              delete rank.countName;
+              delete rank.Count;
 
-              delete rankResult[i].countName;
-              delete rankResult[i].Count;
-            }
-            currentIdNumber++;
-            finalAPIResults[finalAPIResults.length] = { id: currentIdNumber, CountName: "" };
-            currentIdNumber++;
+              finalAPIResults.push(rank);
+            });
+
+            finalAPIResults.push({ countName: "" });
             getCoopCounts(file).then(coopResult => {  //handles coop counts results from API
-              for(let i = 0; i < coopResult.length; currentIdNumber++, i++) {
-                coopResult[i].CountNameNotSortable = coopResult[i].countName;
-                coopResult[i].CountNotSortable = coopResult[i].Count;
-                coopResult[i].id = currentIdNumber + 1;
-                finalAPIResults[finalAPIResults.length] = coopResult[i];
+              coopResult.forEach(coop => {
+                coop.CountNameNotSortable = coop.countName;
+                coop.CountNotSortable = coop.Count;
+                delete coop.countName;
+                delete coop.Count;
 
-                delete coopResult[i].countName;
-                delete coopResult[i].Count;
-              }
+                finalAPIResults.push(coop);
+              });
+
+              finalAPIResults.forEach((element, index) => {
+                element.id = index;
+              });
+              console.log(finalAPIResults)
               setCountsData(finalAPIResults);
             });
             });
@@ -209,10 +207,10 @@ export const Students = ({user}) => {
         break;
       case 'courses': //when course counts toggle is activated
         getCourseCounts(file).then(courseResult => {  //handles course counts results from API
-          for(let i = 0; i < courseResult.length; i++) {
-            courseResult[i].id = i + 1;
-            courseResult[i].CountName = courseResult[i].Course;
-          }
+          courseResult.forEach((course, index) => {
+            course.id = index + 1;
+            course.CountName = course.Course;
+          });
           setCountsData(courseResult);
         });
           break;

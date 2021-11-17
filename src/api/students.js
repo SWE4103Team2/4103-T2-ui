@@ -57,7 +57,7 @@ export const deleteFile = async (file) => {
 
 // Grabs the Number of Students at each campus
 export const getCampusCounts = async (file) => {
-  const result = await api.get('/students/getCampusCounts', {params: {file}});
+  const result = await api.get('/students/getCampusCounts', { params: { file } });
   return result.data;
 };
 
