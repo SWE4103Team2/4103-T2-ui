@@ -21,3 +21,13 @@ export const transcriptColumns = [
   {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
 ];
+
+export const columnsCountSortable = [
+    {field: 'CountName', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center"},
+    {field: 'Count',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center"},
+];
+  
+export const columnsCountNotSortable = [
+    {field: 'CountNameNotSortable', headerName: 'Type',   flex: 1,    align: "center", headerAlign: "center", sortable: false},
+    {field: 'CountNotSortable',     headerName: 'Total',  flex: 1,    align: "center", headerAlign: "center", sortable: false},
+];

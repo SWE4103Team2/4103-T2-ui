@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, TranscriptModal, XLSXSnackbar, XLSXUpload } from '../components';
 import { largeModal } from '../config/modalStyles.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile } from '../api/students';
-import { Paper, Grid, Button, MenuItem, Modal, Box } from '@mui/material';
-import { studentColumns } from '../config/tablesColumns.js';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
+import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
+import { GridToolbarFilterButton } from '@mui/x-data-grid';
 
 export const Students = ({user}) => {
   const [students, setStudents] = useState([]);
@@ -21,10 +22,11 @@ export const Students = ({user}) => {
   const [courses, setCourses] = useState([]);
   const [deleteUpdater, setDeleteUpdater] = useState(false);
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
+  const [countType, setCountType] = useState('misc');
+  const [countsData, setCountsData] = useState([]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
-
   useEffect(() => {
     if(user.userID){
       setUserID(user.userID);
@@ -122,8 +124,9 @@ export const Students = ({user}) => {
   useEffect(() => {
     if (file) {
       setLoading(true);
+      callCountAPI(countType);
       getStudents(searchValue, file).then(result => {
-        getYear(file, searchValue, yearType, userID, customSearchVal).then(year => {
+        getYear(file, searchValue, yearType, userID, customSearchVal, false).then(year => {
           for (let i = 0; i < year.length; i++) {
             result[i].Year = year[i].Year === null ? 0 : year[i].Year;
           }
@@ -157,6 +160,64 @@ export const Students = ({user}) => {
     }
   }
 
+  const callCountAPI = async (type) => {
+    let finalAPIResults = [];
+    switch(type){
+      case 'misc':  //when misc counts toggle is activated
+        getCampusCounts(file).then(campusResult => {  //handles campus counts results from API
+          campusResult.forEach(campus => {
+            campus.CountNameNotSortable = campus.countName;
+            campus.CountNotSortable = campus.Count;
+            delete campus.countName;
+            delete campus.Count;
+
+            finalAPIResults.push(campus);
+          });
+
+          finalAPIResults.push({ countName: "" });
+          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(rankResult => {  //handles rank counts results from API
+            rankResult.forEach(rank => {
+              rank.CountNameNotSortable = rank.countName;
+              rank.CountNotSortable = rank.Count;
+              delete rank.countName;
+              delete rank.Count;
+
+              finalAPIResults.push(rank);
+            });
+
+            finalAPIResults.push({ countName: "" });
+            getCoopCounts(file).then(coopResult => {  //handles coop counts results from API
+              coopResult.forEach(coop => {
+                coop.CountNameNotSortable = coop.countName;
+                coop.CountNotSortable = coop.Count;
+                delete coop.countName;
+                delete coop.Count;
+
+                finalAPIResults.push(coop);
+              });
+
+              finalAPIResults.forEach((element, index) => {
+                element.id = index;
+              });
+              setCountsData(finalAPIResults);
+            });
+            });
+        });
+        break;
+      case 'courses': //when course counts toggle is activated
+        getCourseCounts(file).then(courseResult => {  //handles course counts results from API
+          courseResult.forEach((course, index) => {
+            course.id = index + 1;
+            course.CountName = course.Course;
+          });
+          setCountsData(courseResult);
+        });
+          break;
+      default:
+          setCountsData([{ id: 1, CountName: "Unknown" }]);
+    }
+  }
+
   // Extra Header Buttons
   // I think we should get rid of buttons and have the menu operate the onclick operations.
   const menuButtons = [
@@ -183,6 +244,12 @@ export const Students = ({user}) => {
     "By Core Course",
     "By Custom Requirements",
   ]
+  //custom toolbar components for counts table
+  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
+                              <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
+                              <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
+                              {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
+                            </ToggleButtonGroup>
 
   return (
     <>
@@ -272,10 +339,13 @@ export const Students = ({user}) => {
           </Grid>
         </Grid>
 
-        {/** Students Table **/}
-        <Grid container rowSpacing={2} justifyContent="center" alignItems="center" style={{ textAlign:'center' }} sx={{ pb: '1rem' }}>
-          <Grid item xs={12} sm={12} md={12} sx={{ pl: '1rem', pr: '1rem' }}>
-            <Table names={studentColumns} studentRows={students} doubleClickFunction={openTranscript} loadingIn={loading}/>
+        {/** Tables **/}
+        <Grid container>
+          <Grid item xs={12} sm={12} md={9} sx={{ pr: '1rem', pl: '1rem', pb: '1rem' }}>
+            <Table names={studentColumns} studentRows={students} doubleClickFunction={openTranscript} loadingIn={loading} enableSorting={true} />
+          </Grid>
+          <Grid item xs={12} sm={12} md={3} sx={{ pr: '1rem' }}>
+            <Table names={countType === "courses" ? columnsCountSortable : columnsCountNotSortable} studentRows={countsData} loadingIn={loading} toolbarButtons={toolbarComponents} />
           </Grid>
         </Grid>
       </Paper>
