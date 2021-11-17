@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {useDropzone} from 'react-dropzone';
-import { FormHelperText, Alert, Collapse, IconButton, Grid } from '@mui/material';
+import { FormHelperText, Alert, Collapse, IconButton, Grid, Typography } from '@mui/material';
 import { uploadFilesAPI } from '../api/upload'
 import CloseIcon from '@mui/icons-material/Close';
 import { studentFileHeaders, courseFileHeaders, tranferFileHeaders } from '../config/requiredHeadersForFiles'
 
-export const DropZone = ({btnPressed, pName, dName}) => {
+const DropZone = ({btnPressed, pName, dName}) => {
     const [fileName, setFileName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [errorColor, setErrorColor] = useState("");
     const [errorAlert, setErrorAlert] = useState(false);
-    const [files, setFiles] = useState([]);
+    const [files] = useState([]);
     const [fileValidation, setFileValidation] = useState(true);
-    const {getRootProps, getInputProps, acceptedFiles} = useDropzone({
-        maxFiles:3
-    });
+    const { getRootProps, getInputProps, acceptedFiles } = useDropzone({ maxFiles: 3 });
 
     /*
         API call and check for validation if true and the 'submit' button has been pressed.
@@ -62,6 +60,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
             setErrorMessage("Invalid File(s)");
             setErrorAlert(true)
         }
+        // eslint-disable-next-line
     }, [btnPressed]);
 
     /*
@@ -74,7 +73,7 @@ export const DropZone = ({btnPressed, pName, dName}) => {
             }
             setErrorAlert(false);
             setFileValidation(true);
-            acceptedFiles.map((file) => {
+            acceptedFiles.forEach((file) => {
                 let fileReader = new FileReader();
                 let individualHeadersInFile;
 
@@ -106,11 +105,12 @@ export const DropZone = ({btnPressed, pName, dName}) => {
             });
             setFileName(filesStrings);
         }
+        // eslint-disable-next-line
     }, [acceptedFiles]);
 
     return (
         <Grid container rowSpacing={3}>
-            <Grid item sx={{ padding:3 }}>
+            <Grid item align='center' sx={{ padding:3 }}>
                 <div {...getRootProps({ className: 'dropzone' })} style={{
                     color: "#bdbdbd",
                     backgroundColor: "#fafafa",
@@ -135,7 +135,13 @@ export const DropZone = ({btnPressed, pName, dName}) => {
                     type="file"
                     {...getInputProps()}
                 />
-                <p>Drag 'n' drop files here, or click to select files</p>
+                <Typography>
+                    Drag and Drop Files
+                    <br />
+                    OR
+                    <br />
+                    Click to Select Files
+                </Typography>
                 </div>
                 <FormHelperText>{fileName}</FormHelperText>
             </Grid>
@@ -164,4 +170,6 @@ export const DropZone = ({btnPressed, pName, dName}) => {
             </Grid>
         </Grid>
     )
-}
+};
+
+export default DropZone;

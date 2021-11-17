@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton, GridToolbarColumnsButton, GridOverlay} from '@mui/x-data-grid';
-import { LinearProgress, Button } from '@mui/material';
+import { LinearProgress, Button, Box } from '@mui/material';
 import { isMobile } from 'react-device-detect';
 
 /**
@@ -15,9 +15,8 @@ import { isMobile } from 'react-device-detect';
  */
 const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButtons, enableSorting}) => {
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  //Loading bar component
+  //Loading Bar
   const loadingBar = () => {
     return <GridOverlay>
       <div style={{ position: 'absolute', top: 0, width: '100%' }}>
@@ -26,7 +25,7 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButto
     </GridOverlay>
   }
 
-  //toolbar component
+  // Toolbar
   const customToolbar = () => {
     return (
         toolbarButtons === undefined ? 
@@ -41,21 +40,13 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButto
     );
   }
   
-  // Sets the rows variable with the "studentRows" parameter
+  // Sets Student Data
   useEffect(() => {
     setRows(studentRows);
   }, [studentRows]);
 
-  // sets if it should display loading or not
-  useEffect(() => {
-    setLoading(loadingIn);
-  }, [loadingIn]);
-
-  //returns the table
-  //If the user is on mobile they only need to click the row once and the rows aer a bit bigger, on browser they need to click twice and rows are smaller
   return (
-    <div style={{height:'79vh'}}>
-      {isMobile ?
+    <Box sx={{ height:'79vh' }}>
       <DataGrid
          rows={rows}
          columns={names}
@@ -63,29 +54,14 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn, toolbarButto
          hideFooter={false}
          autoPageSize
          onRowClick={doubleClickFunction !== undefined ? e => doubleClickFunction(e.row) : () => {}}
-         rowHeight={30}
-         loading={loading}
+         rowHeight={isMobile ? 30 : 20}
+         loading={loadingIn}
          components={{
            Toolbar: customToolbar,
            LoadingOverlay: loadingBar
          }}
       />
-      :
-      <DataGrid
-         rows={rows}
-         columns={names}
-         disableColumnMenu={true}
-         hideFooter={false}
-         autoPageSize
-         onRowDoubleClick={doubleClickFunction !== undefined ? e => doubleClickFunction(e.row) : () => {}}
-         rowHeight={20}
-         loading={loading}
-         components={{
-           Toolbar: customToolbar,
-           LoadingOverlay: loadingBar
-         }}
-      />}
-    </div>
+    </Box>
   );
 }
 

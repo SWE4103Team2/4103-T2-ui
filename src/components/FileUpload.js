@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, TextField, Input, Button } from '@mui/material';
 
-export const FileUpload = ({ apiFunction }) => {
+const FileUpload = ({ apiFunction }) => {
   const [fileName, setFileName] = useState(null);
   const [file, setFile] = useState(null);
 
@@ -45,3 +45,5 @@ export const FileUpload = ({ apiFunction }) => {
     </Box>
   );
 };
+
+export default FileUpload;
