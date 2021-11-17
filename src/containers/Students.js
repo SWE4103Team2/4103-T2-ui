@@ -199,7 +199,6 @@ export const Students = ({user}) => {
               finalAPIResults.forEach((element, index) => {
                 element.id = index;
               });
-              console.log(finalAPIResults)
               setCountsData(finalAPIResults);
             });
             });
