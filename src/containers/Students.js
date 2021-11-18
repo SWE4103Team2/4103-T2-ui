@@ -58,7 +58,7 @@ export const Students = ({user}) => {
           return <MenuItem value={item}> {item} </MenuItem>
         });
         setProgramMenus(options);
-        setProgramType(result[0].program);
+        setProgramType(result[0]);
       }
     });
 

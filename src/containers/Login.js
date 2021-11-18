@@ -18,7 +18,7 @@ export const Login = ({ setUser }) => {
 
   // Verifies Login
   const handleLogin = () => {
-    if (username && password) {
+    //if (username && password) {
       getUser(getSHA256(username), getSHA256(password))
       .then(result => {
         if(result.length !== 0){
@@ -30,9 +30,9 @@ export const Login = ({ setUser }) => {
           setError(true);
         }
       });
-    } else {
-      setError(true);
-    }
+    //} else {
+    //  setError(true);
+    //}
   };
 
   // Removes Error Message after timeout (2 Seconds).
