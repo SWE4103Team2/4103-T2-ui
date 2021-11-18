@@ -55,7 +55,7 @@ export const Students = ({user}) => {
     getFileTypes().then(result => {
       if (result.length > 0) {
         const options = result.map(item => {
-          return <MenuItem value={item.program}> {item.program} </MenuItem>
+          return <MenuItem value={item}> {item} </MenuItem>
         });
         setProgramMenus(options);
         setProgramType(result[0].program);
