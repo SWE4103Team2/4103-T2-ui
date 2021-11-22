@@ -140,10 +140,11 @@ export const Students = ({user}) => {
 
   // Upload Core Courses File
   const callUploadCoreCoursesArr = (arr) => {
+    console.log(arr);
     if(arr === undefined){
       setXLSXAlertInfo([true, "Incorrect file type.", true]);
     }
-    else if(arr.length > 0){
+    else if(Object.keys(arr).length > 0){
       const upload = async () => {
         const data = await uploadCoreCoursesArr(arr, userID);
         if(data.insert !== 0){
@@ -229,7 +230,7 @@ export const Students = ({user}) => {
     </MenuItem>,
     <MenuItem>
       <InfoPopover info={"Used to load the core courses. This function only accepts XLSX files in the format shown on this site. These courses can be used to calculate rank and in the transcripts."} />
-      <XLSXUpload setCourseArray={() => callUploadCoreCoursesArr()} />
+      <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
     </MenuItem>,
     <MenuItem>
       <InfoPopover info={"Used to delete all the files related to the currently selected File ID."} />
