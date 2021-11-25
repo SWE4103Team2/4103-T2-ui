@@ -4,7 +4,7 @@ import { Content, Header, Sidebar, Footer } from '../layout/index.js';
 import { Grid, Box } from '@mui/material';
 import { ROUTE_LOGIN } from '../../config/routes.js';
 
-const Route = ({ children, ...rest }) => {
+const Route = ({ setUser, children, ...rest }) => {
   const location = useLocation();
   const [login, setLogin] = useState(false);
   
@@ -17,7 +17,7 @@ const Route = ({ children, ...rest }) => {
       <Grid>
         {!login && <Sidebar />}
         <Box sx={!login ? { ml: '75px' } : null}>
-          <Header login={login} />
+          <Header setUser={setUser} login={login} />
           <Content>
             {children}
           </Content>

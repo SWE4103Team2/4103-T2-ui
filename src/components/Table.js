@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton, GridToolbarColumnsButton, GridOverlay} from '@mui/x-data-grid';
-import LinearProgress from '@mui/material/LinearProgress';
+import { LinearProgress, Box } from '@mui/material';
+import { isMobile } from 'react-device-detect';
 
 /**
  * Student Table component
  * Parameters: a {} with:
  *    - studentRows = list of students from the API, formatted with atleast the columns of name
  *    - name = the column headers
- *    - doubleClickFunction = a function that dictates what should happen when a row is double clicked
+ *    - doubleClickFunction = a function that dictates what should happen when a row is double clicked (default value = the function (() => null))
  *    - loadingIn = if the table should display the loading indicator or not
+ *    - toolbarButtons = toolbar functionality - can now add specific buttons to toolbar
+ *    - enableSorting = not currently inuse but the functionality is there
  */
-const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
+const Table = ({studentRows, names, doubleClickFunction = () => null, loadingIn, toolbarButtons, enableSorting}) => {
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  //Loading bar component
+  //Loading Bar
   const loadingBar = () => {
     return <GridOverlay>
       <div style={{ position: 'absolute', top: 0, width: '100%' }}>
@@ -23,44 +25,43 @@ const Table = ({studentRows, names, doubleClickFunction, loadingIn}) => {
     </GridOverlay>
   }
 
-  //toolbar component
+  // Toolbar
   const customToolbar = () => {
     return (
-      <GridToolbarContainer>
-        <GridToolbarFilterButton />
-        <GridToolbarColumnsButton />
-      </GridToolbarContainer>
+        toolbarButtons === undefined ? 
+          <GridToolbarContainer>
+            <GridToolbarFilterButton />
+            <GridToolbarColumnsButton />
+          </GridToolbarContainer>
+          : 
+          <GridToolbarContainer>
+            {toolbarButtons}
+          </GridToolbarContainer>
     );
   }
   
-  // Sets the rows variable with the "studentRows" parameter
+  // Sets Student Data
   useEffect(() => {
     setRows(studentRows);
   }, [studentRows]);
 
-  // sets if it should display loading or not
-  useEffect(() => {
-    setLoading(loadingIn);
-  }, [loadingIn]);
-
-  //returns the table
   return (
-    <div style={{height:'79vh'}}>
+    <Box sx={{ height:'79vh' }}>
       <DataGrid
          rows={rows}
          columns={names}
          disableColumnMenu={true}
          hideFooter={false}
          autoPageSize
-         onRowDoubleClick={e => {doubleClickFunction(e.row)}}
-         rowHeight={20}
-         loading={loading}
-         components={{ // Uncomment this to add a filter button at the top of the table
+         onRowClick={(e) => doubleClickFunction(e.row)}
+         rowHeight={isMobile ? 30 : 20}
+         loading={loadingIn}
+         components={{
            Toolbar: customToolbar,
            LoadingOverlay: loadingBar
          }}
       />
-    </div>
+    </Box>
   );
 }
 
