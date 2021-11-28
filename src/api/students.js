@@ -38,8 +38,10 @@ export const getEnrollment = async (file, studentID, userID) => {
 };
 
 // Uploads Core Courses
-export const uploadCoreCoursesArr = async (arr, userID) => {
-  const result = await api.get('/students/uploadXLSX', { params: { arr, userID } });
+export const uploadCoreCoursesArr = async (dataIn, userID) => {
+  const form = new FormData();
+  form.append("BRUH", JSON.stringify(dataIn));
+  const result = await api.post('/students/uploadXLSX', form, { params: { userID } });
   return result.data;
 };
 
