@@ -7,6 +7,7 @@ import MenuDropDown from './MenuDropDown.js';
 import MissingStudentMakerModal from './MissingStudentMakerModal.js';
 import SelectBox from './SelectBox.js';
 import Table from './Table.js';
+import AuditModal from './AuditModal.js';
 import TranscriptModal from './TranscriptModal.js';
 import XLSXSnackbar from './XLSXSnackbar.js';
 import XLSXUpload from './XLSXUpload.js';
@@ -21,6 +22,7 @@ export {
   MissingStudentMakerModal,
   SelectBox,
   Table,
+  AuditModal,
   TranscriptModal,
   XLSXSnackbar,
   XLSXUpload

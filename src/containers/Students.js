@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, TranscriptModal, XLSXSnackbar, XLSXUpload } from '../components';
+import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, AuditModal, TranscriptModal, XLSXSnackbar, XLSXUpload, MissingStudentMakerModal } from '../components';
 import { largeModal } from '../config/modalStyles.js';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
-import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup, Tab, Typography, Divider, IconButton } from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
+import CloseIcon from '@mui/icons-material/Close';
 import { GridToolbarFilterButton } from '@mui/x-data-grid';
 
-export const Students = ({user}) => {
+export const Students = ({ user }) => {
   const [students, setStudents] = useState([]);
   const [file, setFile] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -17,6 +19,7 @@ export const Students = ({user}) => {
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
   const [transcriptState, setTranscriptState] = useState(false);
+  const [studentItem, setStudentItem] = useState("1");
   const [customSearchState, setCustomSearchState] = useState(false);
   const [customSearchVal, setCustomSearchVal] = useState({ second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0] });
   const [courses, setCourses] = useState([]);
@@ -117,6 +120,7 @@ export const Students = ({user}) => {
   // Opens Transcript
   const openTranscript = (rowData) => {
     setModalRow(rowData);
+    setStudentItem('1');
     setTranscriptState(true);
   };
 
@@ -246,18 +250,45 @@ export const Students = ({user}) => {
     "By Custom Requirements",
   ]
   //custom toolbar components for counts table
-  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-                              <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
-                              <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
-                              {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
-                            </ToggleButtonGroup>
+  const toolbarComponents = (
+    <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
+      <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
+      <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
+      {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
+    </ToggleButtonGroup>
+  );
 
   return (
     <>
       {/** Transcript Modal **/}
-      <Modal open={transcriptState} onBackdropClick={() => setTranscriptState(false)}>
+      <Modal open={transcriptState} onBackdropClick={() => setTranscriptState(false)}>          
         <Box sx={{ ...largeModal }}>
-          <TranscriptModal closeModal={() => setTranscriptState(false)} rowData={modalRow} userID={userID} programIn={programType}/>
+          <TabContext value={studentItem}>
+            <TabList onChange={(e, n) => setStudentItem(n)}>
+              {modalRow && (
+                <Box sx={{ display: 'flex', mb: '0.5rem', width: '100%' }}>
+                  <Typography variant={"h5"} sx={{ ml: '0.5rem' }}> {modalRow.Name} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}> {modalRow.Student_ID} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}> {modalRow.Cohort} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}>{modalRow.Rank} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  {modalRow.Missing && <MissingStudentMakerModal rowData={modalRow} programIn={programType}/>}
+                </Box>
+              )}
+              <Tab label='Transcript' value='1' />
+              <Tab label='Audit' value='2' />
+            </TabList>
+            <Divider />
+            <TabPanel value="1" sx={{ p: 0, pt: '12px', height: '95%' }}>
+              <TranscriptModal rowData={modalRow} userID={userID} />
+            </TabPanel>
+            <TabPanel value='2' sx={{ p: 0, pt: '12px', height: '90%' }}>
+              <AuditModal studentId={modalRow?.Student_ID} year={modalRow.Cohort} userId={userID} />
+            </TabPanel>
+          </TabContext>
         </Box>
       </Modal>
           

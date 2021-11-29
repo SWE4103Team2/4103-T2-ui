@@ -80,3 +80,8 @@ export const getCoopCounts = async (file) => {
   const result = await api.get('/students/getCoopCounts', {params: {file}});
   return result.data;
 };
+
+export const getAudit = async (params) => {
+  const result = await api.get('/students/getCompleteAudit', { params });
+  return result.data;
+}
