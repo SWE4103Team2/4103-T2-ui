@@ -76,6 +76,7 @@ const XLSXUpload = ({ setCourseArray }) => {
       for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
         if(dataIn[i][j] !== undefined){
           if(typeof dataIn[i][j] === "string"){
+            if(dataIn[i][j].startsWith("or ")) continue;  
             //grab all the matches (doesnt reuse characters)
             const matches = dataIn[i][j].match(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/);
 
@@ -128,7 +129,6 @@ const XLSXUpload = ({ setCourseArray }) => {
       for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
         if(dataIn[i][j] !== undefined){
           if(typeof dataIn[i][j] === "string"){
-
             //grab all the matches (doesnt reuse characters)
             const course = dataIn[i][j].search(/\d/);
 
@@ -166,8 +166,18 @@ const XLSXUpload = ({ setCourseArray }) => {
     for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
       for(j = 1, jSize = dataIn[i].length; j < jSize; j+=2){
         if(dataIn[i][j] !== undefined){
-          if(typeof dataIn[i][j] === "string"){                   
-            output.push({ "Course" : correctCourseID(dataIn[i][j-1]), 'Replaces' : correctCourseID(dataIn[i][j])});
+          if(typeof dataIn[i][j] === "string"){       
+            const matches = [...dataIn[i][j].matchAll(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/g)];
+            if(matches){
+              matches.forEach((arr) => {
+                const curID = correctCourseID(arr[0].trim());
+
+                if(curID !== null){                             
+                  output.push({ "Course" : correctCourseID(dataIn[i][j-1]), 'Replaces' : curID});
+                }
+              });
+            }          
+            
           }
         }
       }
