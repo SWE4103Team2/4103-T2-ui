@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, AuditModal, TranscriptModal, XLSXSnackbar, XLSXUpload, MissingStudentMakerModal } from '../components';
 import { largeModal } from '../config/modalStyles.js';
 import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
-import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup, Tab, Typography, Divider, IconButton } from '@mui/material';
+import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup, Tab, Typography, Divider } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
-import CloseIcon from '@mui/icons-material/Close';
 import { GridToolbarFilterButton } from '@mui/x-data-grid';
 
 export const Students = ({ user }) => {

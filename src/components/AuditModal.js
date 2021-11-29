@@ -10,7 +10,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
       console.log(result);
       setData(result);
     });
-  }, [])
+  }, [fileId, studentId, userId])
 
   return (
     <Box component='div' sx={{ boxShadow: 2, p:'1rem', overflowY: 'scroll', height: '100%' }}>
