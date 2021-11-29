@@ -286,7 +286,7 @@ export const Students = ({ user }) => {
               <TranscriptModal rowData={modalRow} userID={userID} />
             </TabPanel>
             <TabPanel value='2' sx={{ p: 0, pt: '12px', height: '90%' }}>
-              <AuditModal studentId={modalRow?.Student_ID} year={modalRow.Cohort} userId={userID} />
+              <AuditModal fileId={file} studentId={modalRow?.Student_ID} year={modalRow.Cohort} userId={userID} />
             </TabPanel>
           </TabContext>
         </Box>

@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { Box, Grid, Typography, Divider } from '@mui/material';
 import { getAudit } from '../api/students';
 
-const AuditModal = ({ studentId, year, userId }) => {
+const AuditModal = ({ fileId, studentId, year, userId }) => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    getAudit({ studentId, year, userId }).then(result => {
+    getAudit({ fileId, studentId, year, userId }).then(result => {
       console.log(result);
       setData(result);
     });
