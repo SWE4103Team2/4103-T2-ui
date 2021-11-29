@@ -6,10 +6,12 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    getAudit({ fileId, studentId, year, userId }).then(result => {
-      console.log(result);
-      setData(result);
-    });
+    if (fileId && studentId && year && userId) {
+      getAudit({ fileId, studentId, year, userId }).then(result => {
+        console.log(result);
+        setData(result);
+      });
+    } 
   }, [fileId, studentId, userId])
 
   return (
