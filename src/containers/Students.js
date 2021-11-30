@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, TranscriptModal, XLSXSnackbar, XLSXUpload } from '../components';
 import { largeModal } from '../config/modalStyles.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts, getStartYears } from '../api/students';
 import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
 import { GridToolbarFilterButton } from '@mui/x-data-grid';
@@ -24,6 +24,8 @@ export const Students = ({user}) => {
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
   const [countType, setCountType] = useState('misc');
   const [countsData, setCountsData] = useState([]);
+  const [cohort, setCohort] = useState('');
+  const [cohortList, setCohortList] = useState([]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -67,6 +69,8 @@ export const Students = ({user}) => {
     });
     // eslint-disable-next-line
   }, [deleteUpdater]); // Does DeleteUpdater required here???
+
+  
 
   // Formats Student List
   useEffect(() => {
@@ -138,6 +142,28 @@ export const Students = ({user}) => {
     // eslint-disable-next-line
   }, [file, yearType, customSearchVal]); // Can we get rid of CustomSearchVal??
 
+  //update misc counts
+  useEffect(() => {
+    callCountAPI(countType, cohort);
+  }, [cohort]);
+
+  //formats cohort list for counts
+  useEffect(() => {
+    getStartYears(file).then(result => {
+      result.unshift({'Year': 'Total'});
+
+      console.log(result.sort((a, b) => parseInt(a.Year) - parseInt(b.Year)));
+      if (result.length > 0) {
+        const options = result.map(item => {
+          return <MenuItem value={item.Year.toString()}> {item.Year.toString() === "Total" ? item.Year.toString() : item.Year.toString() + '-' + (item.Year+1).toString()} </MenuItem>
+        });
+
+        setCohort(result[0].Year.toString());
+        setCohortList(options);
+      }
+    });
+  }, [file, deleteUpdater]);
+
   // Upload Core Courses File
   const callUploadCoreCoursesArr = (arr) => {
     console.log(arr);
@@ -161,11 +187,12 @@ export const Students = ({user}) => {
     }
   }
 
-  const callCountAPI = async (type) => {
+  const callCountAPI = async (type, year) => {
+    //console.log(year);
     let finalAPIResults = [];
     switch(type){
       case 'misc':  //when misc counts toggle is activated
-        getCampusCounts(file).then(campusResult => {  //handles campus counts results from API
+        getCampusCounts(file, year).then(campusResult => {  //handles campus counts results from API
           campusResult.forEach(campus => {
             campus.CountNameNotSortable = campus.countName;
             campus.CountNotSortable = campus.Count;
@@ -176,10 +203,10 @@ export const Students = ({user}) => {
           });
 
           finalAPIResults.push({ countName: "" });
-          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(rankResult => {  //handles rank counts results from API
+          getYear(file, searchValue, yearType, userID, customSearchVal, true, year).then(rankResult => {  //handles rank counts results from API
             rankResult.forEach(rank => {
               rank.CountNameNotSortable = rank.countName;
-              rank.CountNotSortable = rank.Count;
+              rank.CountNotSortable = rank.CountTotal;
               delete rank.countName;
               delete rank.Count;
 
@@ -187,7 +214,7 @@ export const Students = ({user}) => {
             });
 
             finalAPIResults.push({ countName: "" });
-            getCoopCounts(file).then(coopResult => {  //handles coop counts results from API
+            getCoopCounts(file, year).then(coopResult => {  //handles coop counts results from API
               coopResult.forEach(coop => {
                 coop.CountNameNotSortable = coop.countName;
                 coop.CountNotSortable = coop.Count;
@@ -246,11 +273,27 @@ export const Students = ({user}) => {
     "By Custom Requirements",
   ]
   //custom toolbar components for counts table
-  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-                              <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
-                              <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
-                              {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
-                            </ToggleButtonGroup>
+  const toolbarComponents = (
+    <>
+      <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
+        <ToggleButton value="misc" sx={{height: 32}}>Misc Counts</ToggleButton>
+        
+        <ToggleButton value="courses" sx={{height: 32}}>Course Counts</ToggleButton> 
+        {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
+        
+      </ToggleButtonGroup>
+      {countType !== "courses" ? 
+      <SelectBox
+        value={cohort}
+        label="Cohort"
+        onChange={(e) => setCohort(e.target.value)}
+        sx={{width: "8rem", height: 32}}
+      >
+        {cohortList}
+      </SelectBox> : undefined}
+    </>
+  );
+
 
   return (
     <>
