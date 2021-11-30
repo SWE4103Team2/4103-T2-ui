@@ -7,8 +7,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
 
   useEffect(() => {
     if (fileId && studentId && year && userId) {
-      getAudit({ fileId, studentId, year, userId }).then(result => {
-        console.log(result);
+      getAudit({ fileId, studentId, year: year.substring(0,7), userId }).then(result => {
         setData(result);
       });
     } 
