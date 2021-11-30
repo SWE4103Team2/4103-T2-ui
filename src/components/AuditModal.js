@@ -22,7 +22,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
           <Typography variant='h5'> Core Courses </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
-          <Typography variant='h5' align='right'> Current [ {data?.core?.completed.length} Courses | {data?.core?.ccr} CH ] </Typography>
+          <Typography variant='h5' align='right'> Completed [ {data?.core?.completed.length} Courses | {data?.core?.ccr} CH ] </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
           <Typography variant='h5' align='right'> Required [ {data?.core?.completed.length + data?.core?.progress.length + data?.core?.required.length} Courses | {data?.core?.cr} CH ] </Typography>
@@ -48,7 +48,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
           <Typography variant='h5'> TE Courses </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
-          <Typography variant='h5' align='right'> Current [ {data?.te?.completed.length} Courses | {data?.te?.ccr} CH ] </Typography>
+          <Typography variant='h5' align='right'> Completed [ {data?.te?.completed.length} Courses | {data?.te?.ccr} CH ] </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
           <Typography variant='h5' align='right'> Required [ 4 Courses | 14 CH ] </Typography>
@@ -63,10 +63,6 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
       <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
         {data?.te?.progress?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
       </Box>
-      <Typography variant='h8' sx={{ textDecoration: 'underline' }}> Remaining: </Typography>
-      <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
-        {data?.te?.required?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
-      </Box>
 
       {/* NS Courses */}
       <Grid container display='flex' sx={{ mt: '2rem' }}>
@@ -74,7 +70,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
           <Typography variant='h5'> NS Courses </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
-          <Typography variant='h5' align='right'> Current [ {data?.ns?.completed.length} Courses | {data?.ns?.ccr} CH ] </Typography>
+          <Typography variant='h5' align='right'> Completed [ {data?.ns?.completed.length} Courses | {data?.ns?.ccr} CH ] </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
           <Typography variant='h5' align='right'> Required [ 2 Courses | 5 CH ] </Typography>
@@ -90,10 +86,6 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
       <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
         {data?.ns?.progress?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
       </Box>
-      <Typography variant='h8' sx={{ textDecoration: 'underline' }}> Remaining: </Typography>
-      <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
-        {data?.ns?.required?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
-      </Box>
 
       {/* CSE Courses */}
       <Grid container display='flex' sx={{ mt: '2rem' }}>
@@ -101,7 +93,7 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
           <Typography variant='h5'> CSE Courses </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
-          <Typography variant='h5' align='right'> Current [ {data?.cse?.completed.length} Courses | {data?.cse?.ccr} CH ] </Typography>
+          <Typography variant='h5' align='right'> Completed [ {data?.cse?.completed.length} Courses | {data?.cse?.ccr} CH ] </Typography>
         </Grid>
         <Grid item justifyContent='flex-end' xs={4}>
           <Typography variant='h5' align='right'> Required [ 3 Courses | 9 CH ] </Typography>
@@ -115,10 +107,6 @@ const AuditModal = ({ fileId, studentId, year, userId }) => {
       <Typography variant='h8' sx={{ textDecoration: 'underline' }}> In Progress: </Typography>
       <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
         {data?.cse?.progress?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
-      </Box>
-      <Typography variant='h8' sx={{ textDecoration: 'underline' }}> Remaining: </Typography>
-      <Box display='flex' sx={{ flexFlow: 'wrap', width: '100%', mb: '2rem' }}>
-        {data?.cse?.required?.map(i => <Box sx={{ width: '25%', mr: '2rem' }}> {i} </Box>)}
       </Box>
     </Box>
   );
