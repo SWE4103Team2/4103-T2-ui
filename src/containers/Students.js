@@ -81,11 +81,11 @@ export const Students = ({ user }) => {
         students[i].ShortName = students[i].LastName + (students[i].FirstName[0] ? students[i].FirstName[0] : "");
 
         switch(students[i].Year){
-          case 0: students[i].Rank = "0-FIR"; break;
-          case 1: students[i].Rank = "1-FIR"; break;
-          case 2: students[i].Rank = "2-SOP"; break;
-          case 3: students[i].Rank = "3-JUN"; break;
-          default: students[i].Rank = students[i].Year + (students[i].Year > 0 ? "-SEN" : "-N/A");
+          case 0: students[i].Rank = "FIR"; break;
+          case 1: students[i].Rank = "FIR"; break;
+          case 2: students[i].Rank = "SOP"; break;
+          case 3: students[i].Rank = "JUN"; break;
+          default: students[i].Rank = (students[i].Year > 0 ? "SEN" : "N/A");
         } 
       } else {
         students[i].fileID = file;
@@ -95,7 +95,7 @@ export const Students = ({ user }) => {
         students[i].FirstName = "Name";
         students[i].LastName = "Unknown";
         students[i].ShortName = students[i].LastName + students[i].FirstName[0];
-        students[i].Rank = "0-N/A";
+        students[i].Rank = "N/A";
         students[i].Year = 0;
         students[i].Start_Date = "????-??-??";
         students[i].Program = "??";
@@ -239,7 +239,7 @@ export const Students = ({ user }) => {
       <InfoPopover info={"Used to delete all the files related to the currently selected File ID."} />
       <DeleteButton apiFunction={deleteFile} fileIDIn={file} setUpdate={setDeleteUpdater} updateState={deleteUpdater}/>
     </MenuItem>
-  ]
+  ];
 
   const rankRows = [
     "By Credit Hour",
@@ -247,12 +247,13 @@ export const Students = ({ user }) => {
     "By Cohort",
     "By Core Course",
     "By Custom Requirements",
-  ]
+  ];
+  
   //custom toolbar components for counts table
   const toolbarComponents = (
     <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-      <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
-      <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
+      <ToggleButton value="misc" sx={{ maxHeight: 32 }}">Misc Counts</ToggleButton>
+      <ToggleButton value="courses" sx={{ maxHeight: 32 }}>Course Counts</ToggleButton> 
       {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
     </ToggleButtonGroup>
   );

@@ -2,7 +2,7 @@ export const studentColumns = [
   {field: 'Student_ID', headerName: 'ID',         flex: 0.5,  align: "center", headerAlign: "center"},
   {field: 'ShortName',  headerName: 'Name',       flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
-  {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center"},
+  {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center", sortComparator: (v1, v2) => map[v1] - map[v2] ,},
   {field: 'Status',     headerName: 'Status',     flex: 1,    align: "center", headerAlign: "center"},
   {field: 'FirstName',  headerName: 'First Name', flex: 1,    align: "center", headerAlign: "center", hide:"true"},
   {field: 'LastName',   headerName: 'Last Name',  flex: 1,    align: "center", headerAlign: "center", hide:"true"},
@@ -10,6 +10,8 @@ export const studentColumns = [
   {field: 'Start_Date', headerName: 'Start Date', flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
   {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
 ];
+
+const map = {"N/A" : 0, "FIR" : 1, "SOP" : 2, "JUN" : 3, "SEN" : 4};
 
 export const transcriptColumns = [
   {field: 'Course',     headerName: 'Course ID',    flex: 1,    align: "center", headerAlign: "center"},
