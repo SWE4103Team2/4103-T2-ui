@@ -153,20 +153,22 @@ export const Students = ({ user }) => {
 
   //formats cohort list for counts
   useEffect(() => {
-    getStartYears(file).then(result => {
-      result.unshift({'Year': 'Total'});
+    if(file){
+      getStartYears(file).then(result => {
+        result.unshift({'Year': 'Total'});
 
-      console.log(result.sort((a, b) => parseInt(a.Year) - parseInt(b.Year)));
-      if (result.length > 0) {
-        const options = result.map(item => {
-          return <MenuItem value={item.Year.toString()}> {item.Year.toString() === "Total" ? item.Year.toString() : item.Year.toString() + '-' + (item.Year+1).toString()} </MenuItem>
-        });
+        console.log(result.sort((a, b) => parseInt(a.Year) - parseInt(b.Year)));
+        if (result.length > 0) {
+          const options = result.map(item => {
+            return <MenuItem value={item.Year.toString()}> {item.Year.toString() === "Total" ? item.Year.toString() : item.Year.toString() + '-' + (item.Year+1).toString()} </MenuItem>
+          });
 
-        setCohort(result[0].Year.toString());
-        setCohortList(options);
-      }
-    });
-  }, [file, deleteUpdater]);
+          setCohort(result[0].Year.toString());
+          setCohortList(options);
+        }
+      });
+    }
+  }, [file]);
 
   // Upload Core Courses File
   const callUploadCoreCoursesArr = (arr) => {
