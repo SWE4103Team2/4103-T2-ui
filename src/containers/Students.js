@@ -252,7 +252,7 @@ export const Students = ({ user }) => {
   //custom toolbar components for counts table
   const toolbarComponents = (
     <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-      <ToggleButton value="misc" sx={{ maxHeight: 32 }}">Misc Counts</ToggleButton>
+      <ToggleButton value="misc" sx={{ maxHeight: 32 }}>Misc Counts</ToggleButton>
       <ToggleButton value="courses" sx={{ maxHeight: 32 }}>Course Counts</ToggleButton> 
       {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
     </ToggleButtonGroup>
