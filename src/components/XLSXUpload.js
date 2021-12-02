@@ -72,8 +72,8 @@ const XLSXUpload = ({ setCourseArray }) => {
    const parseMatrix = (dataIn, sheetName) => {
     let output = [];
 
-    for(let i = 0, iSize = dataIn.length, j, jSize; i < iSize; i++){
-      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+    for(let i = 0, iSize = dataIn.length; i < iSize; i++){
+      for(let j = 0, jSize = dataIn[i].length; j < jSize; j++){
         if(dataIn[i][j] !== undefined){
           if(typeof dataIn[i][j] === "string"){
             //grab all the matches (doesnt reuse characters)
@@ -98,8 +98,8 @@ const XLSXUpload = ({ setCourseArray }) => {
   const parsePrereq = (dataIn) => {
     let output = [];
 
-    for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
-      for(j = 1, jSize = dataIn[i].length; j < jSize; j++){
+    for(let i = 1, iSize = dataIn.length; i < iSize; i++){
+      for(let j = 1, jSize = dataIn[i].length; j < jSize; j++){
         if(dataIn[i][j] !== undefined){
           if(typeof dataIn[i][j] === "string"){
             //grab all the matches (doesnt reuse characters)
