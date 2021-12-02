@@ -148,6 +148,7 @@ export const Students = ({ user }) => {
   //update misc counts
   useEffect(() => {
     callCountAPI(countType, cohort);
+    // eslint-disable-next-line
   }, [cohort]);
 
   //formats cohort list for counts
@@ -279,9 +280,15 @@ export const Students = ({ user }) => {
   //custom toolbar components for counts table
   const toolbarComponents = (
     <>
-      <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-        <ToggleButton value="misc" sx={{ maxHeight: 32 }}>Misc Counts</ToggleButton>
-        <ToggleButton value="courses" sx={{ maxHeight: 32 }}>Course Counts</ToggleButton> 
+      <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {
+        setCountsData([]);
+        setCohort("Total");
+        setCountType(e.target.value);
+        callCountAPI(e.target.value);
+
+      }}>
+        <ToggleButton value="misc" sx={{ width: '5rem', fontSize: '75%', maxHeight: 32 }}>Misc Counts</ToggleButton>
+        <ToggleButton value="courses" sx={{ width: '5rem', fontSize: '75%', maxHeight: 32 }}>Course Counts</ToggleButton> 
         {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
       </ToggleButtonGroup>
 
@@ -290,7 +297,7 @@ export const Students = ({ user }) => {
         value={cohort}
         label="Cohort"
         onChange={(e) => setCohort(e.target.value)}
-        sx={{width: "8rem", height: 32}}
+        sx={{width: "8rem", maxWidth: '125%', height: 32}}
       >
         {cohortList}
       </SelectBox> : undefined}

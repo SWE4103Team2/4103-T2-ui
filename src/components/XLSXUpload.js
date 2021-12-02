@@ -169,6 +169,7 @@ const XLSXUpload = ({ setCourseArray }) => {
           if(typeof dataIn[i][j] === "string"){       
             const matches = [...dataIn[i][j].matchAll(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/g)];
             if(matches){
+              // eslint-disable-next-line no-loop-func
               matches.forEach((arr) => {
                 const curID = correctCourseID(arr[0].trim());
 
