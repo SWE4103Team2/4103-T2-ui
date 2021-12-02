@@ -50,9 +50,6 @@ const Sidebar = () => {
         <Divider />
         <List>
           <Item open={open} title="Students" icon={<StudentIcon color="secondary" />} route={ROUTE_STUDENTS} />
-          <Item open={open} title="Page 2" icon={<TempIcon color="secondary" />} route={"/"} />
-          <Item open={open} title="Page 3" icon={<TempIcon color="secondary" />} route={"/"} />
-          <Item open={open} title="Page 4" icon={<TempIcon color="secondary" />} route={"/"} />
           <Item open={open} title="Upload File" icon={<FileUploadIcon color="secondary" />} route={ROUTE_FILEUPLOAD} />
         </List>
       </Drawer>
