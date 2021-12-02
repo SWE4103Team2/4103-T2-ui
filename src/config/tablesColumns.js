@@ -20,7 +20,7 @@ export const transcriptColumns = [
   {field: 'Term',       headerName: 'Term',         flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
-  {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
+  {field: 'Type',       headerName: 'Type',         flex: 2,    align: "center", headerAlign: "center"},
   {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
 ];
 
