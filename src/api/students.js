@@ -32,8 +32,8 @@ export const getAllCourses = async () => {
 };
 
 // Gets All Enrollments for a Student with a FileID
-export const getEnrollment = async (file, studentID, userID) => {
-  const result = await api.get('/students/getEnrollment', { params: { file, studentID, userID }});
+export const getEnrollment = async (file, studentID, userID, cohort) => {
+  const result = await api.get('/students/getEnrollment', { params: { file, studentID, userID , cohort}});
   return result.data;
 };
 

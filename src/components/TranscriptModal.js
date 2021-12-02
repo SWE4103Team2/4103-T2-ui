@@ -34,7 +34,7 @@ const TranscriptModal = ({ rowData, userID }) => {
   // Formats Transcript Data
   useEffect(() => {
     setLoading(true);
-    getEnrollment(rowData.fileID, rowData.Student_ID, userID).then(result => {
+    getEnrollment(rowData.fileID, rowData.Student_ID, userID, rowData.Cohort).then(result => {
         for(let i = 0; i < result.length; i++){
             result[i].id = i+1;
             if(result[i].isCore !== null){
