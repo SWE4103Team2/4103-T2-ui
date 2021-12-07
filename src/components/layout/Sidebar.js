@@ -5,7 +5,6 @@ import { Box, Button, Divider, List, ListItem, ListItemIcon, ListItemText, Toolt
 import MenuIcon from '@mui/icons-material/Menu';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import StudentIcon from '@mui/icons-material/PersonSearch';
-import TempIcon from '@mui/icons-material/HighlightOff';
 import { ROUTE_FILEUPLOAD, ROUTE_STUDENTS } from '../../config/routes.js';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
