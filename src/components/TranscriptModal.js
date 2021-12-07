@@ -41,32 +41,8 @@ const TranscriptModal = ({ rowData, userID }) => {
               result[i].Type = "CORE";
             }
             else{
-              if(result[i].Course.match(".*(COOP|PEP)")) {
-                result[i].Type = "COOP";
-              }
-              else if (result[i].Course.match("(CSE).*")){
-                result[i].Type = "CSE - HSS";
-              }
-              else if (result[i].Course.match("(CS|ECE).*")) {
-                result[i].Type = "TE";
-              }
-              else if (result[i].Course.match("(APSC|ASTR|BIOL|CHE|ESCI|PHYS|SCI).*")) {
-                result[i].Type = "BAS SCI";
-              }
-              else if (result[i].Course.match("(ENV|RCLP|SOCI|STS).*")) {
-                result[i].Type = "CSE - ITS";
-              }
-              else if (result[i].Course.match("(ANTH|CLAS|HIST|PHIL|POLS|ARTS|HUM).*")) {
-                result[i].Type = "CSE - HSS";
-              }
-              else if (result[i].Course.match("(ADM|ECON|ENGL|GER|JPNS|PSYC|TME).*")) {
-                result[i].Type = "CSE - OPEN";
-              }
-              else if (result[i].Course.match("(BLCK).*")) {
-                result[i].Type = "BLOCK";
-              }
-              else {
-                result[i].Type = "CSE - MISC";
+              if(!result[i].Type) {
+                result[i].Type = "MISC";
               }
             }
             if(result[i].Grade === null){
