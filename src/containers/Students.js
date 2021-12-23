@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, TranscriptModal, XLSXSnackbar, XLSXUpload } from '../components';
+import { CustomSearch, DeleteButton, InfoPopover, MenuDropDown, SelectBox, Table, AuditModal, TranscriptModal, XLSXSnackbar, XLSXUpload, MissingStudentMakerModal } from '../components';
 import { largeModal } from '../config/modalStyles.js';
-import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts } from '../api/students';
-import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { getStudents, getFileNames, getYear, getFileTypes, uploadCoreCoursesArr, getAllCourses, deleteFile, getCampusCounts, getCourseCounts, getCoopCounts, getStartYears } from '../api/students';
+import { Paper, Grid, Button, MenuItem, Modal, Box, ToggleButton, ToggleButtonGroup, Tab, Typography, Divider } from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { studentColumns, columnsCountSortable, columnsCountNotSortable } from '../config/tablesColumns.js';
 import { GridToolbarFilterButton } from '@mui/x-data-grid';
 
-export const Students = ({user}) => {
+export const Students = ({ user }) => {
   const [students, setStudents] = useState([]);
   const [file, setFile] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -17,6 +18,7 @@ export const Students = ({user}) => {
   const [loading, setLoading] = useState(false);
   const [modalRow, setModalRow] = useState(null);
   const [transcriptState, setTranscriptState] = useState(false);
+  const [studentItem, setStudentItem] = useState("1");
   const [customSearchState, setCustomSearchState] = useState(false);
   const [customSearchVal, setCustomSearchVal] = useState({ second: [], third: [], fourth: [], creditHoursPer: [0, 0, 0], minCoursePer: [0, 0, 0] });
   const [courses, setCourses] = useState([]);
@@ -24,6 +26,8 @@ export const Students = ({user}) => {
   const [XLSXAlertInfo, setXLSXAlertInfo] = useState([false, [], false]);
   const [countType, setCountType] = useState('misc');
   const [countsData, setCountsData] = useState([]);
+  const [cohort, setCohort] = useState('');
+  const [cohortList, setCohortList] = useState([]);
 
   //This represents the userID, probably a login or something, needed to allow multiple users to user the CoreCourse table
   const [userID, setUserID] = useState(1);
@@ -68,6 +72,8 @@ export const Students = ({user}) => {
     // eslint-disable-next-line
   }, [deleteUpdater]); // Does DeleteUpdater required here???
 
+  
+
   // Formats Student List
   useEffect(() => {
     for (let i = 0; i < students.length; i++) {
@@ -79,11 +85,11 @@ export const Students = ({user}) => {
         students[i].ShortName = students[i].LastName + (students[i].FirstName[0] ? students[i].FirstName[0] : "");
 
         switch(students[i].Year){
-          case 0: students[i].Rank = "0-FIR"; break;
-          case 1: students[i].Rank = "1-FIR"; break;
-          case 2: students[i].Rank = "2-SOP"; break;
-          case 3: students[i].Rank = "3-JUN"; break;
-          default: students[i].Rank = students[i].Year + (students[i].Year > 0 ? "-SEN" : "-N/A");
+          case 0: students[i].Rank = "FIR"; break;
+          case 1: students[i].Rank = "FIR"; break;
+          case 2: students[i].Rank = "SOP"; break;
+          case 3: students[i].Rank = "JUN"; break;
+          default: students[i].Rank = (students[i].Year > 0 ? "SEN" : "N/A");
         } 
       } else {
         students[i].fileID = file;
@@ -93,7 +99,7 @@ export const Students = ({user}) => {
         students[i].FirstName = "Name";
         students[i].LastName = "Unknown";
         students[i].ShortName = students[i].LastName + students[i].FirstName[0];
-        students[i].Rank = "0-N/A";
+        students[i].Rank = "N/A";
         students[i].Year = 0;
         students[i].Start_Date = "????-??-??";
         students[i].Program = "??";
@@ -117,6 +123,7 @@ export const Students = ({user}) => {
   // Opens Transcript
   const openTranscript = (rowData) => {
     setModalRow(rowData);
+    setStudentItem('1');
     setTranscriptState(true);
   };
 
@@ -138,12 +145,38 @@ export const Students = ({user}) => {
     // eslint-disable-next-line
   }, [file, yearType, customSearchVal]); // Can we get rid of CustomSearchVal??
 
+  //update misc counts
+  useEffect(() => {
+    callCountAPI(countType, cohort);
+    // eslint-disable-next-line
+  }, [cohort]);
+
+  //formats cohort list for counts
+  useEffect(() => {
+    if(file){
+      getStartYears(file).then(result => {
+        result.unshift({'Year': 'Total'});
+
+        console.log(result.sort((a, b) => parseInt(a.Year) - parseInt(b.Year)));
+        if (result.length > 0) {
+          const options = result.map(item => {
+            return <MenuItem value={item.Year.toString()}> {item.Year.toString() === "Total" ? item.Year.toString() : item.Year.toString() + '-' + (item.Year+1).toString()} </MenuItem>
+          });
+
+          setCohort(result[0].Year.toString());
+          setCohortList(options);
+        }
+      });
+    }
+  }, [file]);
+
   // Upload Core Courses File
   const callUploadCoreCoursesArr = (arr) => {
+    console.log(arr);
     if(arr === undefined){
       setXLSXAlertInfo([true, "Incorrect file type.", true]);
     }
-    else if(arr.length > 0){
+    else if(Object.keys(arr).length > 0){
       const upload = async () => {
         const data = await uploadCoreCoursesArr(arr, userID);
         if(data.insert !== 0){
@@ -160,11 +193,12 @@ export const Students = ({user}) => {
     }
   }
 
-  const callCountAPI = async (type) => {
+  const callCountAPI = async (type, year) => {
+    //console.log(year);
     let finalAPIResults = [];
     switch(type){
       case 'misc':  //when misc counts toggle is activated
-        getCampusCounts(file).then(campusResult => {  //handles campus counts results from API
+        getCampusCounts(file, year).then(campusResult => {  //handles campus counts results from API
           campusResult.forEach(campus => {
             campus.CountNameNotSortable = campus.countName;
             campus.CountNotSortable = campus.Count;
@@ -175,10 +209,10 @@ export const Students = ({user}) => {
           });
 
           finalAPIResults.push({ countName: "" });
-          getYear(file, searchValue, yearType, userID, customSearchVal, true).then(rankResult => {  //handles rank counts results from API
+          getYear(file, searchValue, yearType, userID, customSearchVal, true, year).then(rankResult => {  //handles rank counts results from API
             rankResult.forEach(rank => {
               rank.CountNameNotSortable = rank.countName;
-              rank.CountNotSortable = rank.Count;
+              rank.CountNotSortable = rank.CountTotal;
               delete rank.countName;
               delete rank.Count;
 
@@ -186,7 +220,7 @@ export const Students = ({user}) => {
             });
 
             finalAPIResults.push({ countName: "" });
-            getCoopCounts(file).then(coopResult => {  //handles coop counts results from API
+            getCoopCounts(file, year).then(coopResult => {  //handles coop counts results from API
               coopResult.forEach(coop => {
                 coop.CountNameNotSortable = coop.countName;
                 coop.CountNotSortable = coop.Count;
@@ -229,13 +263,13 @@ export const Students = ({user}) => {
     </MenuItem>,
     <MenuItem>
       <InfoPopover info={"Used to load the core courses. This function only accepts XLSX files in the format shown on this site. These courses can be used to calculate rank and in the transcripts."} />
-      <XLSXUpload setCourseArray={() => callUploadCoreCoursesArr()} />
+      <XLSXUpload setCourseArray={callUploadCoreCoursesArr} />
     </MenuItem>,
     <MenuItem>
       <InfoPopover info={"Used to delete all the files related to the currently selected File ID."} />
       <DeleteButton apiFunction={deleteFile} fileIDIn={file} setUpdate={setDeleteUpdater} updateState={deleteUpdater}/>
     </MenuItem>
-  ]
+  ];
 
   const rankRows = [
     "By Credit Hour",
@@ -243,20 +277,66 @@ export const Students = ({user}) => {
     "By Cohort",
     "By Core Course",
     "By Custom Requirements",
-  ]
+  ];
+  
   //custom toolbar components for counts table
-  const toolbarComponents = <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {setCountsData([]); setCountType(e.target.value); callCountAPI(e.target.value)}}>
-                              <ToggleButton value="misc" size="small">Misc Counts</ToggleButton>
-                              <ToggleButton value="courses" size="small">Course Counts</ToggleButton> 
-                              {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
-                            </ToggleButtonGroup>
+  const toolbarComponents = (
+    <>
+      <ToggleButtonGroup color="primary" value={countType} exclusive onChange={(e) => {
+        setCountsData([]);
+        setCohort("Total");
+        setCountType(e.target.value);
+        callCountAPI(e.target.value);
+
+      }}>
+        <ToggleButton value="misc" sx={{ width: '5rem', fontSize: '75%', maxHeight: 32 }}>Misc Counts</ToggleButton>
+        <ToggleButton value="courses" sx={{ width: '5rem', fontSize: '75%', maxHeight: 32 }}>Course Counts</ToggleButton> 
+        {countType === "courses" ? <GridToolbarFilterButton /> : undefined}
+      </ToggleButtonGroup>
+
+      {countType !== "courses" ? 
+      <SelectBox
+        value={cohort}
+        label="Cohort"
+        onChange={(e) => setCohort(e.target.value)}
+        sx={{width: "8rem", maxWidth: '125%', height: 32}}
+      >
+        {cohortList}
+      </SelectBox> : undefined}
+    </>
+  );
 
   return (
     <>
       {/** Transcript Modal **/}
-      <Modal open={transcriptState} onBackdropClick={() => setTranscriptState(false)}>
+      <Modal open={transcriptState} onBackdropClick={() => setTranscriptState(false)}>          
         <Box sx={{ ...largeModal }}>
-          <TranscriptModal closeModal={() => setTranscriptState(false)} rowData={modalRow} userID={userID} programIn={programType}/>
+          <TabContext value={studentItem}>
+            <TabList onChange={(e, n) => setStudentItem(n)}>
+              {modalRow && (
+                <Box sx={{ display: 'flex', mb: '0.5rem', width: '100%' }}>
+                  <Typography variant={"h5"} sx={{ ml: '0.5rem' }}> {modalRow.Name} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}> {modalRow.Student_ID} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}> {modalRow.Cohort} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  <Typography variant={"h5"}>{modalRow.Rank} </Typography>
+                  <Divider orientation="vertical" variant='middle' flexItem sx={{ backgroundColor: 'black', ml: '1rem', mr: '1rem' }} />
+                  {modalRow.Missing && <MissingStudentMakerModal rowData={modalRow} programIn={programType}/>}
+                </Box>
+              )}
+              <Tab label='Transcript' value='1' />
+              <Tab label='Audit' value='2' />
+            </TabList>
+            <Divider />
+            <TabPanel value="1" sx={{ p: 0, pt: '12px', height: '95%' }}>
+              <TranscriptModal rowData={modalRow} userID={userID} />
+            </TabPanel>
+            <TabPanel value='2' sx={{ p: 0, pt: '12px', height: '90%' }}>
+              <AuditModal fileId={file} studentId={modalRow?.Student_ID} year={modalRow?.Cohort} userId={userID} />
+            </TabPanel>
+          </TabContext>
         </Box>
       </Modal>
           

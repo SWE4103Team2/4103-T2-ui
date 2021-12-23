@@ -8,8 +8,8 @@ export const getStudents = async (studentID, file) => {
 };
 
 // Gets Year Student is in. (???)
-export const getYear = async (file, studentID, type, userID, searchObject, count) => {
-  const result = await api.get('/students/getYear', { params: { file, studentID, type, userID, searchObject, count } });
+export const getYear = async (file, studentID, type, userID, searchObject, count, year) => {
+  const result = await api.get('/students/getYear', { params: { file, studentID, type, userID, searchObject, count, year } });
   return result.data;
 };
 
@@ -32,14 +32,16 @@ export const getAllCourses = async () => {
 };
 
 // Gets All Enrollments for a Student with a FileID
-export const getEnrollment = async (file, studentID, userID) => {
-  const result = await api.get('/students/getEnrollment', { params: { file, studentID, userID }});
+export const getEnrollment = async (file, studentID, userID, cohort) => {
+  const result = await api.get('/students/getEnrollment', { params: { file, studentID, userID , cohort}});
   return result.data;
 };
 
 // Uploads Core Courses
-export const uploadCoreCoursesArr = async (arr, userID) => {
-  const result = await api.get('/students/uploadXLSX', { params: { arr, userID } });
+export const uploadCoreCoursesArr = async (dataIn, userID) => {
+  const form = new FormData();
+  form.append("BRUH", JSON.stringify(dataIn));
+  const result = await api.post('/students/uploadXLSX', form, { params: { userID } });
   return result.data;
 };
 
@@ -56,25 +58,36 @@ export const deleteFile = async (file) => {
 };
 
 // Grabs the Number of Students at each campus
-export const getCampusCounts = async (file) => {
-  const result = await api.get('/students/getCampusCounts', { params: { file } });
+export const getCampusCounts = async (file, year) => {
+  const result = await api.get('/students/getCampusCounts', { params: { file , year } });
   return result.data;
 };
 
 // Grabs the Number of Students in each course
 export const getCourseCounts = async (file) => {
-  const result = await api.get('/students/getCourseCounts', {params: {file}});
+  const result = await api.get('/students/getCourseCounts', { params: { file }});
   return result.data;
 };
 
 // Grabs the Number of Students according to their rank
 export const getRankCounts = async (file) => {
-  const result = await api.get('/students/getRankCounts', {params: {file}});
+  const result = await api.get('/students/getRankCounts', { params: { file }});
   return result.data;
 };
 
 // Grabs the Number of Students that are in each co-op
-export const getCoopCounts = async (file) => {
-  const result = await api.get('/students/getCoopCounts', {params: {file}});
+export const getCoopCounts = async (file, year) => {
+  const result = await api.get('/students/getCoopCounts', { params: {file, year }});
   return result.data;
 };
+
+// Grabs the Cohort Years for display
+export const getStartYears = async (file) => {
+  const result = await api.get('/students/getStartYears', {params: { file }});
+  return result.data;
+};
+
+export const getAudit = async (params) => {
+  const result = await api.get('/students/getCompleteAudit', { params });
+  return result.data;
+}

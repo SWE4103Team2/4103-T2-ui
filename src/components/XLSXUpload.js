@@ -19,16 +19,39 @@ const XLSXUpload = ({ setCourseArray }) => {
           /* Parse data */
           const ab = e.target.result;
           const wb = XLSX.read(ab, {type:'array'});
+          
+          /* Get all worksheets */
+          const returnJSON = {};
+          if(wb.SheetNames.includes("prereqs")){
+            returnJSON["prereqs"] = parsePrereq(XLSX.utils.sheet_to_json(wb.Sheets["prereqs"], { header:1 }));
+            wb.SheetNames.splice(wb.SheetNames.indexOf("prereqs"), 1);
+          }
+          if(wb.SheetNames.includes("valid-tags")){
+            returnJSON["valid-tags"] = parseVaildTags(XLSX.utils.sheet_to_json(wb.Sheets["valid-tags"], { header:1 }));
+            wb.SheetNames.splice(wb.SheetNames.indexOf("valid-tags"), 1)
+          }
+          if(wb.SheetNames.includes("exceptions")){
+            returnJSON["exceptions"] = parseExceptions(XLSX.utils.sheet_to_json(wb.Sheets["exceptions"], { header:1 }));
+            wb.SheetNames.splice(wb.SheetNames.indexOf("exceptions"), 1)
+          }
+          if(wb.SheetNames.includes("replacements")){
+            returnJSON["replacements"] = parseReplacements(XLSX.utils.sheet_to_json(wb.Sheets["replacements"], { header:1 }));
+            wb.SheetNames.splice(wb.SheetNames.indexOf("replacements"), 1)
+          }
+          if(wb.SheetNames.includes("course-groups")){
+            returnJSON["course-groups"] = parseGroups(XLSX.utils.sheet_to_json(wb.Sheets["course-groups"], { header:1 }));
+            wb.SheetNames.splice(wb.SheetNames.indexOf("course-groups"), 1)
+          }
 
-          /* Get first worksheet */
-          const wsname = wb.SheetNames[0];
-          const ws = wb.Sheets[wsname];
-
-          /* Convert array of arrays */
-          const data = XLSX.utils.sheet_to_json(ws, { header:1 });
-
+          const data = {}; 
+          let total = [];
+          wb.SheetNames.forEach(sheetName => {
+            data[sheetName] = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header:1 });
+            total = total.concat(parseMatrix(data[sheetName], sheetName));
+          });
           /* Update state */
-          setCourseArray(parseData2(data))
+          returnJSON["matrixes"] = total;
+          setCourseArray(returnJSON);
 
       };
       reader.readAsArrayBuffer(file);
@@ -39,48 +62,6 @@ const XLSXUpload = ({ setCourseArray }) => {
     }
   }
 
-/*
-  Haha, so this is a bit of a trash function but the file it reads is also wack
-  The way its setup is kind of good at reading different tables, but not really, read on to see
-  It might be best to have the file open while reading this function
-
-  const parseData = (dataIn) => {
-    let output = [];
-    let curID;
-    let i = 0;
-    // This checks each line for the start of the actual table, then moves to the next line where the actual courses are
-    for(; i < dataIn.length && dataIn[i][0] !== "TERM 1"; i++); 
-    i++;
-    // This checks every 5th row until an empty row is found, the file is set up where the course Ids are spaced out by 5 rows
-    while(dataIn[i].length !== 0){                 
-      //Goes through the rows checking every second column, the course IDs are spaced out by 2 columns             
-      for(let j = 0; j < dataIn[i].length; j += 2){           
-        // checks if theres a ID on that position
-        if(dataIn[i][j] !== undefined){                     
-          //formates the tag
-          curID = correctCourseID(dataIn[i][j]);          
-          //If that position was valid it adds it to the output
-          if(curID !== null){                             
-            output.push(curID); 
-          }
-        }
-        //Checks the line below to see if you choose between 2 classes
-        //This is currently only formated to pick up lines that start with "or ", i think there are other matrixes that use "/" and there are probably ones that use things other than that
-        if(dataIn[i+1][j] !== undefined && dataIn[i+1][j].startsWith("or ")){
-          //formates the tag removing the start part
-          curID = correctCourseID(dataIn[i+1][j].substring(3));
-          //If that position was valid (which is probably will be at this point) it adds it to the output
-          if(curID !== null){
-              output.push(curID); 
-          }
-        }
-      }
-      i += 5;
-    };
-    return output;
-  };
-*/
-
   /** 
    * A more versitile function than the one above
    * about 2x slower (although thats 0.20ms for the old and 0.40ms for the new, so this is better)
@@ -88,11 +69,38 @@ const XLSXUpload = ({ setCourseArray }) => {
    * This uses regex to find every course
    * it actually finds every instance where there is 1-4 letters (not case sensitive) then a single optional space (change the ? after \s to * to have any number of spaces) then 4 numbers
   */
-  const parseData2 = (dataIn) => {
+   const parseMatrix = (dataIn, sheetName) => {
     let output = [];
 
-    for(let i = 0, iSize = dataIn.length, j, jSize; i < iSize; i++){
-      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+    for(let i = 0, iSize = dataIn.length; i < iSize; i++){
+      for(let j = 0, jSize = dataIn[i].length; j < jSize; j++){
+        if(dataIn[i][j] !== undefined){
+          if(typeof dataIn[i][j] === "string"){
+            if(dataIn[i][j].startsWith("or ")) continue;  
+            //grab all the matches (doesnt reuse characters)
+            const matches = dataIn[i][j].match(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/);
+
+            if(matches){
+              matches.forEach((course) => {
+                const curID = correctCourseID(course.trim());
+
+                if(curID !== null){                             
+                  output.push({ "Course" : curID, 'sheetName' : sheetName, "columnID" : j/2}); 
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  const parsePrereq = (dataIn) => {
+    let output = [];
+
+    for(let i = 1, iSize = dataIn.length; i < iSize; i++){
+      for(let j = 1, jSize = dataIn[i].length; j < jSize; j++){
         if(dataIn[i][j] !== undefined){
           if(typeof dataIn[i][j] === "string"){
             //grab all the matches (doesnt reuse characters)
@@ -103,9 +111,96 @@ const XLSXUpload = ({ setCourseArray }) => {
                 const curID = correctCourseID(course.trim());
 
                 if(curID !== null){                             
-                  output.push(curID); 
+                  output.push({ "Course" : curID, 'PrereqFor' : correctCourseID(dataIn[i][0]), 'isCoreq' : dataIn[i][j].endsWith("*") ? 1 : 0}); 
                 }
               });
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  const parseVaildTags = (dataIn) => {
+    let output = [];
+
+    for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
+      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+        if(dataIn[i][j] !== undefined){
+          if(typeof dataIn[i][j] === "string"){
+            //grab all the matches (doesnt reuse characters)
+            const course = dataIn[i][j].search(/\d/);
+
+            if(course !== -1){                      
+              output.push({ "Course" : correctCourseID(dataIn[i][j]), 'Type' : dataIn[0][j], 'isSubject' : 0, 'isException' : 0});
+            }
+            else{                      
+              output.push({ "Course" : dataIn[i][j], 'Type' : dataIn[0][j], 'isSubject' : 1, 'isException' : 0});
+            }
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  const parseExceptions = (dataIn) => {
+    let output = [];
+
+    for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
+      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+        if(dataIn[i][j] !== undefined){
+          if(typeof dataIn[i][j] === "string"){                   
+            output.push({ "Course" : correctCourseID(dataIn[i][j]), 'Type' : dataIn[0][j], 'isSubject' : 0, 'isException' : 1});
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  const parseReplacements = (dataIn) => {
+    let output = [];
+
+    for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
+      for(j = 1, jSize = dataIn[i].length; j < jSize; j+=2){
+        if(dataIn[i][j] !== undefined){
+          if(typeof dataIn[i][j] === "string"){       
+            const matches = [...dataIn[i][j].matchAll(/(^|[^A-Za-z])[A-Za-z]{1,4}\s?\d{4}/g)];
+            if(matches){
+              // eslint-disable-next-line no-loop-func
+              matches.forEach((arr) => {
+                const curID = correctCourseID(arr[0].trim());
+
+                if(curID !== null){                             
+                  output.push({ "Course" : correctCourseID(dataIn[i][j-1]), 'Replaces' : curID});
+                }
+              });
+            }          
+            
+          }
+        }
+      }
+    }
+    return output;
+  }
+
+  const parseGroups = (dataIn) => {
+    let output = [];
+
+    for(let i = 1, iSize = dataIn.length, j, jSize; i < iSize; i++){
+      for(j = 0, jSize = dataIn[i].length; j < jSize; j++){
+        if(dataIn[i][j] !== undefined){
+          if(typeof dataIn[i][j] === "string"){
+
+            const course = dataIn[i][j].search(/\d/);
+
+            if(course !== -1){                      
+              output.push({ "Course" : correctCourseID(dataIn[i][j]), 'Group' : dataIn[0][j], 'isSubject' : 0});
+            }
+            else{                      
+              output.push({ "Course" : dataIn[i][j], 'Group' : dataIn[0][j], 'isSubject' : 1});
             }
           }
         }
@@ -123,7 +218,7 @@ const XLSXUpload = ({ setCourseArray }) => {
     }
 
     // Cover the edge case where the engg courses arent titled correctly
-    if(crsID.startsWith("ENG") && crsID[3] !== 'G'){
+    if(crsID.startsWith("ENG") && crsID[3] !== 'G' && crsID[3] !== 'L'){
       crsID = crsID.slice(0, 3) + 'G' + crsID.slice(3, crsID.length);
       numStartIndex++;
     }

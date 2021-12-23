@@ -2,7 +2,7 @@ export const studentColumns = [
   {field: 'Student_ID', headerName: 'ID',         flex: 0.5,  align: "center", headerAlign: "center"},
   {field: 'ShortName',  headerName: 'Name',       flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Cohort',     headerName: 'Cohort',     flex: 1,    align: "center", headerAlign: "center"},
-  {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center"},
+  {field: 'Rank',       headerName: 'Rank',       flex: 0.5,  align: "center", headerAlign: "center", sortComparator: (v1, v2) => map[v1] - map[v2] ,},
   {field: 'Status',     headerName: 'Status',     flex: 1,    align: "center", headerAlign: "center"},
   {field: 'FirstName',  headerName: 'First Name', flex: 1,    align: "center", headerAlign: "center", hide:"true"},
   {field: 'LastName',   headerName: 'Last Name',  flex: 1,    align: "center", headerAlign: "center", hide:"true"},
@@ -11,6 +11,8 @@ export const studentColumns = [
   {field: 'Program',    headerName: 'Program',    flex: 0.5,  align: "center", headerAlign: "center", hide:"true"},
 ];
 
+const map = {"N/A" : 0, "FIR" : 1, "SOP" : 2, "JUN" : 3, "SEN" : 4};
+
 export const transcriptColumns = [
   {field: 'Course',     headerName: 'Course ID',    flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Title',      headerName: 'Title',        flex: 3,    align: "center", headerAlign: "center"},
@@ -18,7 +20,7 @@ export const transcriptColumns = [
   {field: 'Term',       headerName: 'Term',         flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Section',    headerName: 'Section',      flex: 1,    align: "center", headerAlign: "center"},
   {field: 'Credit_Hrs', headerName: 'Credit Hours', flex: 1,    align: "center", headerAlign: "center"},
-  {field: 'Type',       headerName: 'Type',         flex: 1,    align: "center", headerAlign: "center"},
+  {field: 'Type',       headerName: 'Type',         flex: 2,    align: "center", headerAlign: "center"},
   {field: 'Passed',     headerName: 'Passed',       flex: 1,    align: "center", headerAlign: "center"},
 ];
 

@@ -18,7 +18,6 @@ export const Login = ({ setUser }) => {
 
   // Verifies Login
   const handleLogin = () => {
-    //if (username && password) {
       getUser(getSHA256(username), getSHA256(password))
       .then(result => {
         if(result.length !== 0){
@@ -30,9 +29,6 @@ export const Login = ({ setUser }) => {
           setError(true);
         }
       });
-    //} else {
-    //  setError(true);
-    //}
   };
 
   // Removes Error Message after timeout (2 Seconds).
@@ -54,7 +50,7 @@ export const Login = ({ setUser }) => {
           type="text"
           label="Username"
           value={username}
-          onKeyPress={e => e.key === "Enter" && handleLogin()}
+          onKeyPress={e => e.key === "Enter" && console.log(getSHA256(username))}
           onChange={e => setUsername(e.target.value)}
           sx={{ width: '90%' }}
         />
